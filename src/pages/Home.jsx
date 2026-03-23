@@ -86,7 +86,7 @@ export default function Home({ onLogout }) {
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontWeight: 800, fontSize: "1.2rem", color: "var(--color-primary)" }}>
-                    ${task.budget}
+                    ₹{task.budget}
                   </div>
                   {task.status === "COMPLETED" && (
                     <p className="text-small" style={{ fontWeight: 700, color: "var(--color-mint)" }}>READY!</p>

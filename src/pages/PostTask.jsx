@@ -78,7 +78,7 @@ export default function PostTask() {
           </div>
 
           <div style={{ marginBottom: "2.5rem" }}>
-            <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>BUDGET ($)</label>
+            <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>BUDGET (₹)</label>
             <input name="budget" type="number" placeholder="Amount" value={formData.budget} onChange={handleChange} disabled={isSubmitting} style={{ borderColor: error && !formData.budget ? "var(--color-primary)" : "" }} />
           </div>
 

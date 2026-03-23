@@ -69,7 +69,7 @@ export default function TaskDetail() {
           </div>
           <div>
             <p className="text-small">BUDGET</p>
-            <p style={{ fontWeight: 800, color: "var(--color-primary)", fontSize: "1.2rem" }}>${task.budget}</p>
+            <p style={{ fontWeight: 800, color: "var(--color-primary)", fontSize: "1.2rem" }}>₹{task.budget}</p>
           </div>
         </div>
       </div>

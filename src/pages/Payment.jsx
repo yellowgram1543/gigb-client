@@ -66,7 +66,7 @@ export default function Payment() {
         <hr style={{ margin: "1rem 0", border: "1px solid #eee" }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <p style={{ fontWeight: 800, fontSize: "1.2rem" }}>Total Amount:</p>
-          <p style={{ fontWeight: 800, fontSize: "1.5rem", color: "var(--color-primary)" }}>${task.budget}</p>
+          <p style={{ fontWeight: 800, fontSize: "1.5rem", color: "var(--color-primary)" }}>₹{task.budget}</p>
         </div>
       </div>
 
@@ -91,7 +91,7 @@ export default function Payment() {
         onClick={handlePay}
         disabled={isProcessing}
       >
-        {isProcessing ? "Processing..." : `Confirm & Pay $${task.budget}`}
+        {isProcessing ? "Processing..." : `Confirm & Pay ₹${task.budget}`}
       </button>
 
       <p style={{ textAlign: "center", marginTop: "1rem", fontSize: "0.8rem", opacity: 0.6 }}>

@@ -47,7 +47,7 @@ export default function TaskList() {
                 <p className="text-small" style={{ opacity: 0.7 }}>Address: {task.address}</p>
               </div>
               <div style={{ textAlign: "right" }}>
-                <p style={{ fontWeight: 800, fontSize: "1.2rem", color: "var(--color-primary)" }}>${task.budget}</p>
+                <p style={{ fontWeight: 800, fontSize: "1.2rem", color: "var(--color-primary)" }}>₹{task.budget}</p>
                 <p className="text-small" style={{ fontWeight: 700 }}>VIEW DETAILS</p>
               </div>
             </div>
