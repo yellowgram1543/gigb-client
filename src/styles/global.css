@@ -1,32 +1,143 @@
-body {
+/* 1. Color System & Variables */
+:root {
+  --color-primary: #FF552E;      /* Orange-Red: Strong action */
+  --color-secondary: #F2A815;    /* Gold: Primary CTA */
+  --color-soft-accent: #FED170;  /* Yellow: Hover/Light fills */
+  --color-lavender: #B6ACE4;     /* Purple: Cards/Surfaces */
+  --color-soft-pink: #FFC1C6;    /* Pink: Notifications */
+  --color-mint: #ABCF82;         /* Green: Success */
+  
+  --color-text: #1A1A1A;
+  --color-white: #FFFFFF;
+  
+  --border-thick: 3px solid var(--color-text);
+  --radius-pill: 50px;
+  --radius-soft: 24px;
+  
+  --shadow-soft: 0 6px 0 rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 10px 0 rgba(0, 0, 0, 0.15);
+  
+  --transition: all 0.25s ease-in-out;
+}
+
+/* 2. Global Resets & Typography */
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #B6ACE4, #FFC1C6, #FED170);
+  padding: 0;
 }
 
-/* Common card */
+body {
+  font-family: 'Quicksand', 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif; /* Soft rounded fonts */
+  color: var(--color-text);
+  background: fixed;
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 3. Signature Background: Abstract Gradient + Noise */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background: 
+    radial-gradient(at 0% 0%, var(--color-lavender) 0%, transparent 50%),
+    radial-gradient(at 100% 0%, var(--color-soft-pink) 0%, transparent 50%),
+    radial-gradient(at 50% 100%, var(--color-soft-accent) 0%, transparent 50%),
+    white;
+  filter: blur(80px);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.03; /* Subtle noise */
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* 4. Core Component Styles */
+
+/* 4.1 Cards */
 .card {
-  background: white;
-  border-radius: 20px;
-  padding: 16px;
-  border: 2px solid #000;
-  box-shadow: 4px 4px 0px #00000020;
+  background: var(--color-white);
+  border: var(--border-thick);
+  border-radius: var(--radius-soft);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  transition: var(--transition);
 }
 
-/* Buttons */
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* 4.2 Buttons */
 .btn {
-  padding: 12px 18px;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem 1.8rem;
   font-weight: 600;
+  border: var(--border-thick);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: scale(0.96);
 }
 
 .btn-primary {
-  background: #F2A815;
+  background: var(--color-secondary);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+  background: var(--color-soft-accent);
 }
 
 .btn-secondary {
-  background: #FF552E;
+  background: var(--color-primary);
   color: white;
 }
+
+/* 4.3 Input Fields */
+input, textarea {
+  width: 100%;
+  padding: 1rem;
+  border: var(--border-thick);
+  border-radius: var(--radius-soft);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: var(--transition);
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--color-secondary);
+  background: #FFFDF8;
+}
+
+/* 5. Utility Typography */
+h1, h2, h3 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+.text-small { font-size: 0.875rem; font-weight: 600; }
