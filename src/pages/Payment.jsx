@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 export default function Payment() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Mock data for the task being paid for
-  const task = {
-    title: "Walk the dog",
-    budget: "15",
-    helper: "Sarah Smith"
+  // Get the task data passed from TaskDetail.jsx
+  const task = location.state?.task || {
+    title: "Unknown Task",
+    budget: "0",
+    helper: { name: "Unknown Helper" }
   };
 
   const handlePay = () => {
     setIsProcessing(true);
-    // Simulate a payment delay
     setTimeout(() => {
       setIsProcessing(false);
       setIsSuccess(true);
@@ -27,10 +27,9 @@ export default function Payment() {
     return (
       <main style={{ padding: "20px", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
         <div className="card" style={{ maxWidth: "400px", textAlign: "center", background: "var(--color-mint)" }}>
-          <h1 style={{ fontSize: "3rem", marginBottom: "1rem" }}>💰</h1>
           <h2>Payment Successful!</h2>
           <p style={{ fontWeight: 600, margin: "1rem 0 2rem" }}>
-            The payment for <strong>{task.title}</strong> has been sent to <strong>{task.helper}</strong>.
+            The payment for <strong>{task.title}</strong> has been sent to <strong>{task.helper?.name || "the helper"}</strong>.
           </p>
           <button className="btn btn-primary" onClick={() => navigate("/")} style={{ width: "100%" }}>
             Back to Dashboard
@@ -47,11 +46,11 @@ export default function Payment() {
           onClick={() => navigate(-1)} 
           style={{ background: "none", border: "none", fontWeight: 700, cursor: "pointer" }}
         >
-          ← Back
+          Back
         </button>
       </header>
 
-      <h1>Final Payment 💸</h1>
+      <h1>Final Payment</h1>
       <p style={{ fontWeight: 600, color: "#666", marginBottom: "2rem" }}>Complete the payment to close this task.</p>
 
       {/* Payment Summary */}
@@ -62,7 +61,7 @@ export default function Payment() {
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
           <p style={{ fontWeight: 600 }}>Helper:</p>
-          <p style={{ fontWeight: 800 }}>{task.helper}</p>
+          <p style={{ fontWeight: 800 }}>{task.helper?.name || "Assigned Helper"}</p>
         </div>
         <hr style={{ margin: "1rem 0", border: "1px solid #eee" }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -75,13 +74,13 @@ export default function Payment() {
       <h2>Select Method</h2>
       <div style={{ display: "flex", flexDirection: "column", gap: "10px", margin: "1.5rem 0 2.5rem" }}>
         <button className="btn" style={{ justifyContent: "flex-start", background: "white" }}>
-          💳 Credit or Debit Card
+          Credit or Debit Card
         </button>
         <button className="btn" style={{ justifyContent: "flex-start", background: "white" }}>
-          🍎 Apple Pay
+          Apple Pay
         </button>
         <button className="btn" style={{ justifyContent: "flex-start", background: "white" }}>
-          G Pay
+          Google Pay
         </button>
       </div>
 
@@ -96,7 +95,7 @@ export default function Payment() {
       </button>
 
       <p style={{ textAlign: "center", marginTop: "1rem", fontSize: "0.8rem", opacity: 0.6 }}>
-        🔒 Secure payment powered by GigB
+        Secure payment powered by GigB
       </p>
     </main>
   );

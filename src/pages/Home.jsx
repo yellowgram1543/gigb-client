@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 export default function Home({ onLogout }) {
   const navigate = useNavigate();
   
-  // 1. Mock Data: Change this to [] to see the "Empty State"
+  // 1. Updated Mock Data to match TaskDetail statuses (OPEN, ASSIGNED, COMPLETED)
   const [tasks, setTasks] = useState([
-    { id: 1, title: "Deliver groceries", status: "Active", price: "$20" },
-    { id: 2, title: "Fix kitchen sink", status: "Completed", price: "$50" }
+    { id: 1, title: "Deliver groceries", status: "OPEN", price: "$20" },
+    { id: 2, title: "Fix kitchen sink", status: "ASSIGNED", price: "$50" },
+    { id: 3, title: "Walk the dog", status: "COMPLETED", price: "$15" }
   ]);
 
-  const activeCount = tasks.filter(t => t.status === "Active").length;
+  const activeCount = tasks.filter(t => t.status !== "COMPLETED").length;
 
   return (
     <main style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
@@ -25,9 +26,9 @@ export default function Home({ onLogout }) {
         gap: "1rem"
       }}>
         <div>
-          <h1>Dashboard 🏠</h1>
+          <h1>Dashboard</h1>
           <p style={{ fontWeight: 600, color: "#666" }}>
-            You have <span style={{ color: "var(--color-primary)" }}>{activeCount} active tasks</span>
+            You have <span style={{ color: "var(--color-primary)" }}>{activeCount} tasks in progress</span>
           </p>
         </div>
         
@@ -37,7 +38,7 @@ export default function Home({ onLogout }) {
             className="btn btn-secondary"
             onClick={() => navigate("/tasks")}
           >
-            📋 All Tasks
+            All Tasks
           </button>
           <button 
             className="btn btn-primary"
@@ -68,7 +69,7 @@ export default function Home({ onLogout }) {
           /* ❗ Edge Case: Empty State */
           <div className="card" style={{ textAlign: "center", padding: "3rem", borderStyle: "dashed", opacity: 0.8 }}>
             <p style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: "1rem" }}>
-              No tasks yet. Start by posting one. 📭
+              No tasks yet. Start by posting one.
             </p>
             <button className="btn btn-primary" onClick={() => navigate("/post-task")}>
               Create My First Task
@@ -92,16 +93,23 @@ export default function Home({ onLogout }) {
                 <div>
                   <h3 style={{ marginBottom: "0.2rem" }}>{task.title}</h3>
                   <span className="text-small" style={{ 
-                    background: task.status === "Active" ? "var(--color-mint)" : "#eee",
+                    background: task.status === "OPEN" ? "var(--color-secondary)" : 
+                               task.status === "ASSIGNED" ? "var(--color-lavender)" : "var(--color-mint)",
                     padding: "2px 8px",
                     borderRadius: "10px",
-                    border: "2px solid #1a1a1a"
+                    border: "2px solid #1a1a1a",
+                    fontWeight: 700
                   }}>
-                    {task.status}
+                    {task.status === "COMPLETED" ? "PROCEED TO PAYMENT" : task.status}
                   </span>
                 </div>
-                <div style={{ fontWeight: 800, fontSize: "1.2rem", color: "var(--color-primary)" }}>
-                  {task.price}
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontWeight: 800, fontSize: "1.2rem", color: "var(--color-primary)" }}>
+                    {task.price}
+                  </div>
+                  {task.status === "COMPLETED" && (
+                    <p className="text-small" style={{ fontWeight: 700, color: "var(--color-mint)" }}>READY!</p>
+                  )}
                 </div>
               </div>
             ))}

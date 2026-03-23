@@ -89,7 +89,7 @@ export default function TaskDetail() {
           onClick={() => navigate("/tasks")} 
           style={{ background: "none", border: "none", fontWeight: 700, cursor: "pointer" }}
         >
-          ← Back to All Tasks
+          Back to All Tasks
         </button>
       </header>
 
@@ -115,7 +115,7 @@ export default function TaskDetail() {
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           <div style={{ flex: 1 }}>
             <p className="text-small">ADDRESS</p>
-            <p style={{ fontWeight: 800, lineHeight: "1.4" }}>📍 {task.address}</p>
+            <p style={{ fontWeight: 800, lineHeight: "1.4" }}>{task.address}</p>
           </div>
           <div>
             <p className="text-small">BUDGET</p>
@@ -129,7 +129,7 @@ export default function TaskDetail() {
       {/* 🟡 Case 1: Task = OPEN - Show Applicants */}
       {task.status === "OPEN" && (
         <section>
-          <h2>Applicants 👥</h2>
+          <h2>Applicants</h2>
           <p className="text-small" style={{ marginBottom: "1.5rem" }}>Who wants to help you with this task?</p>
           
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -137,7 +137,7 @@ export default function TaskDetail() {
               <div key={app.id} className="card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <h3 style={{ marginBottom: "2px" }}>{app.name}</h3>
-                  <p className="text-small">⭐ {app.rating} ({app.reviews} reviews)</p>
+                  <p className="text-small">{app.rating} ({app.reviews} reviews)</p>
                 </div>
                 <div style={{ display: "flex", gap: "10px" }}>
                   <button 
@@ -157,14 +157,19 @@ export default function TaskDetail() {
       {/* 🔵 Case 2: Task = ASSIGNED / ONGOING - Show Selected Helper */}
       {task.status === "ASSIGNED" && task.helper && (
         <section>
-          <h2>Selected Helper ✅</h2>
+          <h2>Selected Helper</h2>
           <div className="card" style={{ background: "var(--color-lavender)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
               <h3>{task.helper.name}</h3>
               <p className="text-small">Helper is ready for action!</p>
             </div>
             <div style={{ display: "flex", gap: "10px" }}>
-              <button className="btn btn-secondary">Chat</button>
+              <button 
+                className="btn btn-secondary"
+                onClick={() => navigate(`/chat/${task.id}`, { state: { task } })}
+              >
+                Chat
+              </button>
               <button 
                 className="btn btn-primary" 
                 onClick={handleCompleteTask}
@@ -180,13 +185,13 @@ export default function TaskDetail() {
       {task.status === "COMPLETED" && (
         <section>
           <div className="card" style={{ background: "var(--color-mint)", textAlign: "center", padding: "2.5rem" }}>
-            <h2 style={{ marginBottom: "0.5rem" }}>Task Completed! 🎉</h2>
+            <h2 style={{ marginBottom: "0.5rem" }}>Task Completed!</h2>
             <p style={{ fontWeight: 600, marginBottom: "2rem" }}>Everything is done. Time to finalize the payment.</p>
             <button 
               className="btn btn-primary"
-              onClick={() => navigate(`/payment/${task.id}`)}
+              onClick={() => navigate(`/payment/${task.id}`, { state: { task } })}
             >
-              Proceed to Payment →
+              Proceed to Payment
             </button>
           </div>
         </section>

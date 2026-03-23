@@ -21,12 +21,12 @@ export default function PostTask() {
 
     // 1. Validation Logic
     if (!formData.title || !formData.description || !formData.address || !formData.budget) {
-      setError("Oops! All fields are required. 🛑");
+      setError("Oops! All fields are required.");
       return;
     }
 
     if (isNaN(formData.budget) || parseFloat(formData.budget) <= 0) {
-      setError("Please enter a valid budget amount. 💰");
+      setError("Please enter a valid budget amount.");
       return;
     }
 
@@ -60,11 +60,11 @@ export default function PostTask() {
           gap: "5px"
         }}
       >
-        ← Back to Dashboard
+        Back to Dashboard
       </button>
 
       <div className="card">
-        <h1>Post a Task ➕</h1>
+        <h1>Post a Task</h1>
         <p style={{ fontWeight: 600, color: "#666", marginBottom: "2rem" }}>
           Fill in the details to find someone to help you.
         </p>
@@ -134,7 +134,7 @@ export default function PostTask() {
 
           {/* Submit Button */}
           <button type="submit" className="btn btn-primary" style={{ width: "100%" }}>
-            Post This Task 🚀
+            Post This Task
           </button>
         </form>
       </div>

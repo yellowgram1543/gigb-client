@@ -6,9 +6,10 @@ import PostTask from "./pages/PostTask";
 import TaskList from "./pages/TaskList";
 import TaskDetail from "./pages/TaskDetail";
 import Payment from "./pages/Payment";
+import Chat from "./pages/Chat";
 
 export default function App() {
-  // Persistence: Check localStorage on first load
+  // 1. Change to State so it can be updated
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return localStorage.getItem("isLoggedIn") === "true";
   }); 
@@ -30,7 +31,7 @@ export default function App() {
           path="/auth" 
           element={isAuthenticated ? <Navigate to="/" /> : <Auth onLogin={handleLogin} />} 
         />
-        
+
         <Route 
           path="/" 
           element={isAuthenticated ? <Home onLogout={handleLogout} /> : <Navigate to="/auth" />} 
@@ -54,6 +55,11 @@ export default function App() {
         <Route 
           path="/payment/:id" 
           element={isAuthenticated ? <Payment /> : <Navigate to="/auth" />} 
+        />
+
+        <Route 
+          path="/chat/:id" 
+          element={isAuthenticated ? <Chat /> : <Navigate to="/auth" />} 
         />
 
         <Route path="*" element={<Navigate to="/auth" />} />

@@ -36,7 +36,7 @@ export default function TaskList() {
 
       {taskList.length === 0 ? (
         <div className="card" style={{ borderStyle: "dashed", opacity: 0.6, textAlign: "center", padding: "1.5rem" }}>
-          <p className="text-small">No tasks in this category. 🍃</p>
+          <p className="text-small">No tasks in this category.</p>
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -49,11 +49,11 @@ export default function TaskList() {
             >
               <div>
                 <h3 style={{ fontSize: "1.1rem", marginBottom: "4px" }}>{task.title}</h3>
-                <p className="text-small" style={{ opacity: 0.7 }}>📍 {task.address}</p>
+                <p className="text-small" style={{ opacity: 0.7 }}>Address: {task.address}</p>
               </div>
               <div style={{ textAlign: "right" }}>
                 <p style={{ fontWeight: 800, fontSize: "1.2rem", color: "var(--color-primary)" }}>${task.budget}</p>
-                <p className="text-small" style={{ fontWeight: 700 }}>VIEW DETAILS →</p>
+                <p className="text-small" style={{ fontWeight: 700 }}>VIEW DETAILS</p>
               </div>
             </div>
           ))}
@@ -71,7 +71,7 @@ export default function TaskList() {
           onClick={() => navigate("/")} 
           style={{ background: "none", border: "none", fontWeight: 700, cursor: "pointer" }}
         >
-          ← Dashboard
+          Back
         </button>
         <button 
           className="btn btn-primary" 
@@ -81,7 +81,7 @@ export default function TaskList() {
         </button>
       </header>
 
-      <h1>All Tasks 📋</h1>
+      <h1>All Tasks</h1>
       <p style={{ fontWeight: 600, color: "#666", marginBottom: "2.5rem" }}>
         Track your workflow from open to completed.
       </p>

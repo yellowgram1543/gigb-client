@@ -74,7 +74,7 @@ export default function Auth({ onLogin }) {
               textAlign: "center", 
               marginBottom: "1rem" 
             }}>
-              ⚠️ {error}
+              {error}
             </p>
           )}
 
