@@ -9,7 +9,11 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors()); 
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow your React app
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+})); 
 app.use(express.json()); 
 
 // Logging for every request (to see what's happening)
