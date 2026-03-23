@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
+import PostTask from "./pages/PostTask";
 
 export default function App() {
   // 1. Change to State so it can be updated
@@ -24,10 +25,15 @@ export default function App() {
           element={isAuthenticated ? <Navigate to="/" /> : <Auth onLogin={handleLogin} />} 
         />
         
-        {/* Protected Home Route */}
+        {/* Protected Routes */}
         <Route 
           path="/" 
           element={isAuthenticated ? <Home onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+        />
+
+        <Route 
+          path="/post-task" 
+          element={isAuthenticated ? <PostTask /> : <Navigate to="/auth" />} 
         />
 
         {/* Catch-all: Redirect to Auth */}
