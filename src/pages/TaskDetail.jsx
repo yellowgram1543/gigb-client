@@ -182,7 +182,12 @@ export default function TaskDetail() {
           <div className="card" style={{ background: "var(--color-mint)", textAlign: "center", padding: "2.5rem" }}>
             <h2 style={{ marginBottom: "0.5rem" }}>Task Completed! 🎉</h2>
             <p style={{ fontWeight: 600, marginBottom: "2rem" }}>Everything is done. Time to finalize the payment.</p>
-            <button className="btn btn-primary">Proceed to Payment →</button>
+            <button 
+              className="btn btn-primary"
+              onClick={() => navigate(`/payment/${task.id}`)}
+            >
+              Proceed to Payment →
+            </button>
           </div>
         </section>
       )}
