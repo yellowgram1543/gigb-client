@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
 import PostTask from "./pages/PostTask";
+import TaskList from "./pages/TaskList";
 
 export default function App() {
   // 1. Change to State so it can be updated
@@ -34,6 +35,11 @@ export default function App() {
         <Route 
           path="/post-task" 
           element={isAuthenticated ? <PostTask /> : <Navigate to="/auth" />} 
+        />
+
+        <Route 
+          path="/tasks" 
+          element={isAuthenticated ? <TaskList /> : <Navigate to="/auth" />} 
         />
 
         {/* Catch-all: Redirect to Auth */}
