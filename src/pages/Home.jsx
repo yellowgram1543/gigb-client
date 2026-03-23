@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Home() {
+export default function Home({ onLogout }) {
   const navigate = useNavigate();
   
   // 1. Mock Data: Change this to [] to see the "Empty State"
@@ -105,7 +105,10 @@ export default function Home() {
       <div style={{ marginTop: "3rem", textAlign: "center" }}>
         <span 
           style={{ cursor: "pointer", fontWeight: 700, textDecoration: "underline" }}
-          onClick={() => navigate("/auth")}
+          onClick={() => {
+            onLogout();
+            navigate("/auth");
+          }}
         >
           Logout from account
         </span>

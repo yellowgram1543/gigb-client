@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Auth() {
+export default function Auth({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,11 +18,10 @@ export default function Auth() {
       return;
     }
 
-    // 2. Mock Backend Interaction (Later replace with real API)
-    console.log(`${isLogin ? "Logging in" : "Signing up"} with:`, { email, password });
+    // 2. Call the Login handler from App.jsx
+    onLogin();
     
     // 3. Success -> Redirect to Home
-    // For now, we simulate success and go home
     navigate("/");
   };
 
