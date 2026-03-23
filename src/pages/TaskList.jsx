@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api";
 
 export default function TaskList() {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ export default function TaskList() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/tasks");
+        const response = await api.get("/tasks");
         setTasks(response.data);
       } catch (err) {
         console.error("Error fetching tasks:", err);
@@ -29,10 +29,7 @@ export default function TaskList() {
     <section style={{ marginBottom: "2.5rem" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "1rem" }}>
         <h2 style={{ marginBottom: 0 }}>{title}</h2>
-        <span style={{ 
-          background: color, padding: "2px 12px", borderRadius: "var(--radius-pill)", 
-          border: "var(--border-thick)", fontWeight: 800, fontSize: "0.8rem"
-        }}>
+        <span style={{ background: color, padding: "2px 12px", borderRadius: "var(--radius-pill)", border: "var(--border-thick)", fontWeight: 800, fontSize: "0.8rem" }}>
           {taskList.length}
         </span>
       </div>
@@ -44,12 +41,7 @@ export default function TaskList() {
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           {taskList.map(task => (
-            <div 
-              key={task._id} 
-              className="card" 
-              onClick={() => navigate(`/task/${task._id}`)}
-              style={{ cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-            >
+            <div key={task._id} className="card" onClick={() => navigate(`/task/${task._id}`)} style={{ cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <h3 style={{ fontSize: "1.1rem", marginBottom: "4px" }}>{task.title}</h3>
                 <p className="text-small" style={{ opacity: 0.7 }}>Address: {task.address}</p>

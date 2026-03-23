@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api";
 
 export default function TaskDetail() {
   const { id } = useParams();
@@ -8,11 +8,10 @@ export default function TaskDetail() {
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 1. Fetch real data from the backend
   useEffect(() => {
     const fetchTask = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/tasks/${id}`);
+        const response = await api.get(`/tasks/${id}`);
         setTask(response.data);
       } catch (err) {
         console.error("Error fetching task:", err);
@@ -30,7 +29,7 @@ export default function TaskDetail() {
 
   const handleUpdateStatus = async (newStatus, helper = null) => {
     try {
-      const response = await axios.patch(`http://localhost:5000/api/tasks/${id}`, {
+      const response = await api.patch(`/tasks/${id}`, {
         status: newStatus,
         helper: helper
       });

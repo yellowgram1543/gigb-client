@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api";
 
 export default function Home({ onLogout }) {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch real data from Backend
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/tasks");
+        const response = await api.get("/tasks");
         setTasks(response.data);
       } catch (err) {
         console.error("Error fetching tasks:", err);
@@ -26,8 +25,6 @@ export default function Home({ onLogout }) {
 
   return (
     <main style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      
-      {/* Header Section */}
       <header style={{ 
         display: "flex", 
         justifyContent: "space-between", 
@@ -42,14 +39,12 @@ export default function Home({ onLogout }) {
             {loading ? "Loading..." : `You have ${activeCount} tasks in progress`}
           </p>
         </div>
-        
         <div style={{ display: "flex", gap: "10px" }}>
           <button className="btn btn-secondary" onClick={() => navigate("/tasks")}>All Tasks</button>
           <button className="btn btn-primary" onClick={() => navigate("/post-task")}>+ Post Task</button>
         </div>
       </header>
 
-      {/* Stats Bar */}
       <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "2rem" }}>
         <div className="card" style={{ background: "var(--color-lavender)", textAlign: "center", padding: "1rem" }}>
           <h3 style={{ marginBottom: "0" }}>{tasks.length}</h3>
@@ -61,10 +56,8 @@ export default function Home({ onLogout }) {
         </div>
       </section>
 
-      {/* Recent Tasks */}
       <section>
         <h2 style={{ marginBottom: "1.5rem" }}>Recent Tasks</h2>
-        
         {loading ? (
           <p>Loading your tasks...</p>
         ) : tasks.length === 0 ? (
@@ -95,6 +88,9 @@ export default function Home({ onLogout }) {
                   <div style={{ fontWeight: 800, fontSize: "1.2rem", color: "var(--color-primary)" }}>
                     ${task.budget}
                   </div>
+                  {task.status === "COMPLETED" && (
+                    <p className="text-small" style={{ fontWeight: 700, color: "var(--color-mint)" }}>READY!</p>
+                  )}
                 </div>
               </div>
             ))}
@@ -107,7 +103,6 @@ export default function Home({ onLogout }) {
           Logout from account
         </span>
       </div>
-
     </main>
   );
 }
