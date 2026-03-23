@@ -6,7 +6,7 @@ export default function PostTask() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    location: "",
+    address: "",
     budget: ""
   });
   const [error, setError] = useState("");
@@ -20,7 +20,7 @@ export default function PostTask() {
     setError("");
 
     // 1. Validation Logic
-    if (!formData.title || !formData.description || !formData.location || !formData.budget) {
+    if (!formData.title || !formData.description || !formData.address || !formData.budget) {
       setError("Oops! All fields are required. 🛑");
       return;
     }
@@ -91,35 +91,38 @@ export default function PostTask() {
               value={formData.description}
               onChange={handleChange}
               style={{ 
-                height: "120px",
+                height: "100px",
                 borderColor: error && !formData.description ? "var(--color-primary)" : "" 
               }}
             />
           </div>
 
-          {/* Location & Budget Row */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "2rem" }}>
-            <div>
-              <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>LOCATION</label>
-              <input 
-                name="location"
-                placeholder="City or Area" 
-                value={formData.location}
-                onChange={handleChange}
-                style={{ borderColor: error && !formData.location ? "var(--color-primary)" : "" }}
-              />
-            </div>
-            <div>
-              <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>BUDGET ($)</label>
-              <input 
-                name="budget"
-                type="number"
-                placeholder="Amount" 
-                value={formData.budget}
-                onChange={handleChange}
-                style={{ borderColor: error && !formData.budget ? "var(--color-primary)" : "" }}
-              />
-            </div>
+          {/* Address - Made into a bigger box (textarea) */}
+          <div style={{ marginBottom: "2rem" }}>
+            <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>ADDRESS</label>
+            <textarea 
+              name="address"
+              placeholder="Enter your full address here..." 
+              value={formData.address}
+              onChange={handleChange}
+              style={{ 
+                height: "100px",
+                borderColor: error && !formData.address ? "var(--color-primary)" : "" 
+              }}
+            />
+          </div>
+
+          {/* Budget Row */}
+          <div style={{ marginBottom: "2.5rem" }}>
+            <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>BUDGET ($)</label>
+            <input 
+              name="budget"
+              type="number"
+              placeholder="Amount" 
+              value={formData.budget}
+              onChange={handleChange}
+              style={{ borderColor: error && !formData.budget ? "var(--color-primary)" : "" }}
+            />
           </div>
 
           {/* Error Message */}

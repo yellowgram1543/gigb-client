@@ -10,7 +10,7 @@ export default function TaskDetail() {
     id: id,
     title: "Deliver groceries",
     description: "Please pick up the following items from the store: milk, eggs, bread, and some apples. Need it delivered before 6 PM.",
-    location: "Downtown",
+    address: "Downtown",
     budget: "20",
     status: "OPEN", // Initial state
     helper: null
@@ -64,14 +64,14 @@ export default function TaskDetail() {
         
         <p style={{ fontWeight: 600, marginBottom: "1.5rem" }}>{task.description}</p>
         
-        <div style={{ display: "flex", gap: "20px" }}>
-          <div>
-            <p className="text-small">LOCATION</p>
-            <p style={{ fontWeight: 800 }}>📍 {task.location}</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div style={{ flex: 1 }}>
+            <p className="text-small">ADDRESS</p>
+            <p style={{ fontWeight: 800, lineHeight: "1.4" }}>📍 {task.address}</p>
           </div>
           <div>
             <p className="text-small">BUDGET</p>
-            <p style={{ fontWeight: 800, color: "var(--color-primary)" }}>${task.budget}</p>
+            <p style={{ fontWeight: 800, color: "var(--color-primary)", fontSize: "1.2rem" }}>${task.budget}</p>
           </div>
         </div>
       </div>

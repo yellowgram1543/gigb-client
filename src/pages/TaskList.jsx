@@ -6,11 +6,11 @@ export default function TaskList() {
 
   // 1. Mock Data for all statuses
   const [tasks] = useState([
-    { id: 1, title: "Deliver groceries", budget: "20", status: "open", location: "Downtown" },
-    { id: 2, title: "Fix kitchen sink", budget: "50", status: "ongoing", location: "North Side" },
-    { id: 3, title: "Walk the dog", budget: "15", status: "completed", location: "Park Ave" },
-    { id: 4, title: "Assembling Ikea bed", budget: "40", status: "open", location: "East Side" },
-    { id: 5, title: "Clean front yard", budget: "30", status: "ongoing", location: "West Side" },
+    { id: 1, title: "Deliver groceries", budget: "20", status: "open", address: "Downtown" },
+    { id: 2, title: "Fix kitchen sink", budget: "50", status: "ongoing", address: "North Side" },
+    { id: 3, title: "Walk the dog", budget: "15", status: "completed", address: "Park Ave" },
+    { id: 4, title: "Assembling Ikea bed", budget: "40", status: "open", address: "East Side" },
+    { id: 5, title: "Clean front yard", budget: "30", status: "ongoing", address: "West Side" },
   ]);
 
   // Filtering Logic
@@ -49,7 +49,7 @@ export default function TaskList() {
             >
               <div>
                 <h3 style={{ fontSize: "1.1rem", marginBottom: "4px" }}>{task.title}</h3>
-                <p className="text-small" style={{ opacity: 0.7 }}>📍 {task.location}</p>
+                <p className="text-small" style={{ opacity: 0.7 }}>📍 {task.address}</p>
               </div>
               <div style={{ textAlign: "right" }}>
                 <p style={{ fontWeight: 800, fontSize: "1.2rem", color: "var(--color-primary)" }}>${task.budget}</p>
