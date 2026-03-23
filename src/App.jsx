@@ -4,6 +4,7 @@ import Auth from "./pages/Auth";
 import Home from "./pages/Home";
 import PostTask from "./pages/PostTask";
 import TaskList from "./pages/TaskList";
+import TaskDetail from "./pages/TaskDetail";
 
 export default function App() {
   // 1. Change to State so it can be updated
@@ -40,6 +41,11 @@ export default function App() {
         <Route 
           path="/tasks" 
           element={isAuthenticated ? <TaskList /> : <Navigate to="/auth" />} 
+        />
+
+        <Route 
+          path="/task/:id" 
+          element={isAuthenticated ? <TaskDetail /> : <Navigate to="/auth" />} 
         />
 
         {/* Catch-all: Redirect to Auth */}

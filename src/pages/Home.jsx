@@ -32,12 +32,20 @@ export default function Home({ onLogout }) {
         </div>
         
         {/* Primary CTA: Post Task */}
-        <button 
-          className="btn btn-primary"
-          onClick={() => navigate("/post-task")}
-        >
-          + Post Task
-        </button>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button 
+            className="btn btn-secondary"
+            onClick={() => navigate("/tasks")}
+          >
+            📋 All Tasks
+          </button>
+          <button 
+            className="btn btn-primary"
+            onClick={() => navigate("/post-task")}
+          >
+            + Post Task
+          </button>
+        </div>
       </header>
 
       {/* Summary / Stats Bar */}
