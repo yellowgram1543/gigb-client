@@ -35,7 +35,7 @@ export default function Auth({ onLogin }) {
     }}>
       <div className="card" style={{ maxWidth: "420px", width: "100%" }}>
         <h1 style={{ textAlign: "center", marginBottom: "0.5rem" }}>
-          {isLogin ? "Welcome Back! 👋" : "Join GigB 🚀"}
+          {isLogin ? "Welcome Back!" : "Join GigB"}
         </h1>
         <p style={{ textAlign: "center", marginBottom: "2rem", fontWeight: 600, color: "#666" }}>
           {isLogin ? "Login to your account" : "Create a new account to start"}
