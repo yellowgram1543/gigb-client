@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function PostTask() {
   const navigate = useNavigate();
@@ -10,37 +11,47 @@ export default function PostTask() {
     budget: ""
   });
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsSubmitting(true);
 
     // 1. Validation Logic
     if (!formData.title || !formData.description || !formData.address || !formData.budget) {
       setError("Oops! All fields are required.");
+      setIsSubmitting(false);
       return;
     }
 
     if (isNaN(formData.budget) || parseFloat(formData.budget) <= 0) {
       setError("Please enter a valid budget amount.");
+      setIsSubmitting(false);
       return;
     }
 
-    // 2. Create Task Object (Concept)
-    const newTask = {
-      ...formData,
-      status: "open",
-      createdAt: new Date().toISOString()
-    };
-
-    console.log("Saving Task:", newTask);
-
-    // 3. Mock Success -> Go back to Home
-    navigate("/");
+    // 2. Real Backend Submission (MongoDB Atlas)
+    try {
+      const response = await axios.post("http://localhost:5000/api/tasks", {
+        ...formData,
+        budget: parseFloat(formData.budget)
+      });
+      
+      console.log("Task Saved Successfully:", response.data);
+      
+      // 3. Success -> Go back to Home
+      navigate("/");
+    } catch (err) {
+      console.error("Error saving task:", err);
+      setError("Failed to save task. Please check your connection.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -78,6 +89,7 @@ export default function PostTask() {
               placeholder="e.g., Deliver groceries" 
               value={formData.title}
               onChange={handleChange}
+              disabled={isSubmitting}
               style={{ borderColor: error && !formData.title ? "var(--color-primary)" : "" }}
             />
           </div>
@@ -90,6 +102,7 @@ export default function PostTask() {
               placeholder="Describe what needs to be done..." 
               value={formData.description}
               onChange={handleChange}
+              disabled={isSubmitting}
               style={{ 
                 height: "100px",
                 borderColor: error && !formData.description ? "var(--color-primary)" : "" 
@@ -105,6 +118,7 @@ export default function PostTask() {
               placeholder="Enter your full address here..." 
               value={formData.address}
               onChange={handleChange}
+              disabled={isSubmitting}
               style={{ 
                 height: "100px",
                 borderColor: error && !formData.address ? "var(--color-primary)" : "" 
@@ -121,6 +135,7 @@ export default function PostTask() {
               placeholder="Amount" 
               value={formData.budget}
               onChange={handleChange}
+              disabled={isSubmitting}
               style={{ borderColor: error && !formData.budget ? "var(--color-primary)" : "" }}
             />
           </div>
@@ -133,8 +148,13 @@ export default function PostTask() {
           )}
 
           {/* Submit Button */}
-          <button type="submit" className="btn btn-primary" style={{ width: "100%" }}>
-            Post This Task
+          <button 
+            type="submit" 
+            className="btn btn-primary" 
+            style={{ width: "100%" }}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Posting..." : "Post This Task"}
           </button>
         </form>
       </div>
