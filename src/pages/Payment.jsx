@@ -1,15 +1,25 @@
 import React, { useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import api from "../api";
+import useTaskStore from "../store/taskStore";
 
 export default function Payment() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const updateTask = useTaskStore((state) => state.updateTask);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  
+  // Review States
+  const [rating, setRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [isReviewed, setIsReviewed] = useState(false);
 
   // Get the task data passed from TaskDetail.jsx
   const task = location.state?.task || {
+    _id: id,
     title: "Unknown Task",
     budget: "0",
     helper: { name: "Unknown Helper" }
@@ -23,17 +33,100 @@ export default function Payment() {
     }, 2000);
   };
 
-  if (isSuccess) {
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (rating === 0) return alert("Please select a rating!");
+    
+    setIsSubmittingReview(true);
+    try {
+      const response = await api.patch(`/tasks/${id}`, {
+        rating,
+        reviewText
+      });
+      updateTask(response.data);
+      setIsReviewed(true);
+    } catch (err) {
+      console.error("Error submitting review:", err);
+      alert("Failed to save review. Please try again.");
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  if (isReviewed) {
     return (
       <main style={{ padding: "20px", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
         <div className="card" style={{ maxWidth: "400px", textAlign: "center", background: "var(--color-mint)" }}>
-          <h2>Payment Successful!</h2>
+          <h2 style={{ fontSize: "3rem", marginBottom: "1rem" }}>✨</h2>
+          <h2>Thank You!</h2>
           <p style={{ fontWeight: 600, margin: "1rem 0 2rem" }}>
-            The payment for <strong>{task.title}</strong> has been sent to <strong>{task.helper?.name || "the helper"}</strong>.
+            Your feedback helps <strong>{task.helper?.name}</strong> grow and helps other users find great help.
           </p>
           <button className="btn btn-primary" onClick={() => navigate("/")} style={{ width: "100%" }}>
-            Back to Dashboard
+            Return to Dashboard
           </button>
+        </div>
+      </main>
+    );
+  }
+
+  if (isSuccess) {
+    return (
+      <main style={{ padding: "20px", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
+        <div className="card" style={{ maxWidth: "450px", width: "100%", textAlign: "center" }}>
+          <h2 style={{ color: "var(--color-mint)", fontSize: "2.5rem" }}>✓</h2>
+          <h1>Payment Successful!</h1>
+          <p style={{ fontWeight: 600, color: "#666", marginBottom: "2rem" }}>
+            Now, please take a moment to rate your experience with <strong>{task.helper?.name}</strong>.
+          </p>
+
+          <form onSubmit={handleReviewSubmit}>
+            <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginBottom: "2rem" }}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setRating(star)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "2.5rem",
+                    cursor: "pointer",
+                    color: star <= rating ? "var(--color-primary)" : "#ddd",
+                    transition: "transform 0.1s"
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.2)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1.0)")}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+
+            <textarea
+              placeholder="Write a short review (optional)..."
+              value={reviewText}
+              onChange={(e) => setReviewText(e.target.value)}
+              style={{
+                width: "100%",
+                height: "100px",
+                padding: "15px",
+                borderRadius: "var(--radius-md)",
+                border: "var(--border-thick)",
+                marginBottom: "2rem",
+                fontSize: "1rem"
+              }}
+            />
+
+            <button 
+              type="submit" 
+              className="btn btn-primary" 
+              style={{ width: "100%" }}
+              disabled={isSubmittingReview || rating === 0}
+            >
+              {isSubmittingReview ? "Submitting..." : "Submit Review"}
+            </button>
+          </form>
         </div>
       </main>
     );

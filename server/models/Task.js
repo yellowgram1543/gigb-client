@@ -27,8 +27,17 @@ const taskSchema = new mongoose.Schema({
     name: String,
     rating: String,
     reviews: Number
+  },
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5
+  },
+  reviewText: {
+    type: String,
+    trim: true
   }
-}, { timestamps: true }); // Automatically adds createdAt and updatedAt dates
+}, { timestamps: true });
 
 const Task = mongoose.model('Task', taskSchema);
 
