@@ -40,6 +40,7 @@ export default function Payment() {
     setIsSubmittingReview(true);
     try {
       const response = await api.patch(`/tasks/${id}`, {
+        status: "PAID",
         rating,
         reviewText
       });

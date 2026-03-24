@@ -116,6 +116,24 @@ export default function TaskDetail() {
           </div>
         </section>
       )}
+
+      {task.status === "PAID" && (
+        <section>
+          <div className="card" style={{ background: "var(--color-mint)", textAlign: "center", padding: "2.5rem" }}>
+            <h2>✓ Payment Confirmed</h2>
+            <p style={{ fontWeight: 600, margin: "1rem 0" }}>This task is fully closed.</p>
+            {task.rating && (
+              <div style={{ marginTop: "1.5rem", borderTop: "1px solid rgba(0,0,0,0.1)", paddingTop: "1.5rem" }}>
+                <p className="text-small">YOUR REVIEW</p>
+                <div style={{ fontSize: "1.5rem", color: "var(--color-primary)", margin: "0.5rem 0" }}>
+                  {"★".repeat(task.rating)}{"☆".repeat(5 - task.rating)}
+                </div>
+                <p style={{ fontStyle: "italic" }}>"{task.reviewText || "No written review provided."}"</p>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

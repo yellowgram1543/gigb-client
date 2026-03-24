@@ -21,7 +21,7 @@ export default function Home({ onLogout }) {
     fetchTasks();
   }, []);
 
-  const activeCount = tasks.filter(t => t.status !== "COMPLETED").length;
+  const activeCount = tasks.filter(t => t.status !== "COMPLETED" && t.status !== "PAID").length;
 
   return (
     <main style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
@@ -78,7 +78,8 @@ export default function Home({ onLogout }) {
                   <h3 style={{ marginBottom: "0.2rem" }}>{task.title}</h3>
                   <span className="text-small" style={{ 
                     background: task.status === "OPEN" ? "var(--color-secondary)" : 
-                               task.status === "ASSIGNED" ? "var(--color-lavender)" : "var(--color-mint)",
+                               task.status === "ASSIGNED" ? "var(--color-lavender)" : 
+                               task.status === "PAID" ? "#eee" : "var(--color-mint)",
                     padding: "2px 8px", borderRadius: "10px", border: "2px solid #1a1a1a", fontWeight: 700
                   }}>
                     {task.status === "COMPLETED" ? "PROCEED TO PAYMENT" : task.status}

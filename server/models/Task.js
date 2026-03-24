@@ -20,7 +20,7 @@ const taskSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['OPEN', 'ASSIGNED', 'COMPLETED'],
+    enum: ['OPEN', 'ASSIGNED', 'COMPLETED', 'PAID'],
     default: 'OPEN'
   },
   helper: {
