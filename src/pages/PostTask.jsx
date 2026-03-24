@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 
+import useTaskStore from "../store/taskStore";
+
 export default function PostTask() {
   const navigate = useNavigate();
+  const addTask = useTaskStore((state) => state.addTask);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -35,10 +38,11 @@ export default function PostTask() {
     }
 
     try {
-      await api.post("/tasks", {
+      const response = await api.post("/tasks", {
         ...formData,
         budget: parseFloat(formData.budget)
       });
+      addTask(response.data); // Update global store immediately
       navigate("/");
     } catch (err) {
       console.error("Error saving task:", err);

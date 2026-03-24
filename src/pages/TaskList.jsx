@@ -2,24 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 
+import useTaskStore from "../store/taskStore";
+
 export default function TaskList() {
   const navigate = useNavigate();
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { tasks, loading, fetchTasks } = useTaskStore();
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await api.get("/tasks");
-        setTasks(response.data);
-      } catch (err) {
-        console.error("Error fetching tasks:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTasks();
-  }, []);
+    // Only fetch if we don't have tasks yet to avoid redundant calls
+    if (tasks.length === 0) {
+      fetchTasks();
+    }
+  }, [tasks.length, fetchTasks]);
 
   const openTasks = tasks.filter(t => t.status === "OPEN" || t.status === "open");
   const ongoingTasks = tasks.filter(t => t.status === "ASSIGNED" || t.status === "ongoing");

@@ -8,33 +8,22 @@ import TaskDetail from "./pages/TaskDetail";
 import Payment from "./pages/Payment";
 import Chat from "./pages/Chat";
 
+import useAuthStore from "./store/authStore";
+
 export default function App() {
-  // 1. Change to State so it can be updated
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem("isLoggedIn") === "true";
-  }); 
-
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-    localStorage.setItem("isLoggedIn", "true");
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem("isLoggedIn");
-  };
+  const { isAuthenticated, login, logout } = useAuthStore();
 
   return (
     <Router>
       <Routes>
         <Route 
           path="/auth" 
-          element={isAuthenticated ? <Navigate to="/" /> : <Auth onLogin={handleLogin} />} 
+          element={isAuthenticated ? <Navigate to="/" /> : <Auth onLogin={login} />} 
         />
 
         <Route 
           path="/" 
-          element={isAuthenticated ? <Home onLogout={handleLogout} /> : <Navigate to="/auth" />} 
+          element={isAuthenticated ? <Home onLogout={logout} /> : <Navigate to="/auth" />} 
         />
 
         <Route 
