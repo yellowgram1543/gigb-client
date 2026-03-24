@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api";
+import useTaskStore from "../store/taskStore";
 
 export default function TaskDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const updateTask = useTaskStore((state) => state.updateTask);
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -13,6 +15,7 @@ export default function TaskDetail() {
       try {
         const response = await api.get(`/tasks/${id}`);
         setTask(response.data);
+        updateTask(response.data); // Update global store if fetched individually
       } catch (err) {
         console.error("Error fetching task:", err);
       } finally {
@@ -20,7 +23,7 @@ export default function TaskDetail() {
       }
     };
     fetchTask();
-  }, [id]);
+  }, [id, updateTask]);
 
   const [applicants] = useState([
     { id: 101, name: "John Doe", rating: "4.8", reviews: 25 },
@@ -34,6 +37,7 @@ export default function TaskDetail() {
         helper: helper
       });
       setTask(response.data);
+      updateTask(response.data); // Update global store immediately
     } catch (err) {
       console.error("Error updating status:", err);
     }
