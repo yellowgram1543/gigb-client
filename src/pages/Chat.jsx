@@ -5,7 +5,7 @@ import api from "../api";
 import useAuthStore from "../store/authStore";
 
 // Connect to the backend socket
-const socket = io(import.meta.env.VITE_API_BASE_URL || "http://localhost:5000");
+const socket = io("http://localhost:5000");
 
 export default function Chat() {
   const { id } = useParams();
@@ -16,7 +16,6 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
 
-  // Get the task data passed from TaskDetail.jsx
   const task = location.state?.task || {
     title: "Chat",
     helper: { name: "Helper" }
@@ -27,22 +26,21 @@ export default function Chat() {
   };
 
   useEffect(() => {
-    // 1. Join the room for this task
+    console.log("DEBUG: Attempting to join room:", id);
     socket.emit("join_room", id);
 
-    // 2. Fetch message history
     const fetchHistory = async () => {
       try {
         const response = await api.get(`/messages/${id}`);
         setMessages(response.data);
       } catch (err) {
-        console.error("Error fetching chat history:", err);
+        console.error("DEBUG ERROR: Fetching history failed:", err);
       }
     };
     fetchHistory();
 
-    // 3. Listen for incoming messages
     socket.on("receive_message", (data) => {
+      console.log("DEBUG: New message received from socket:", data);
       setMessages((prev) => [...prev, data]);
     });
 
@@ -66,6 +64,7 @@ export default function Chat() {
       text: inputText
     };
 
+    console.log("DEBUG: Sending message data:", messageData);
     socket.emit("send_message", messageData);
     setInputText("");
   };
@@ -79,7 +78,6 @@ export default function Chat() {
       margin: "0 auto",
       background: "white"
     }}>
-      {/* Header */}
       <header style={{ 
         padding: "15px 20px", 
         background: "white", 
@@ -101,7 +99,6 @@ export default function Chat() {
         </div>
       </header>
 
-      {/* Message List */}
       <section style={{ 
         flex: 1, 
         overflowY: "auto", 
@@ -144,7 +141,6 @@ export default function Chat() {
         <div ref={messagesEndRef} />
       </section>
 
-      {/* Input Bar */}
       <footer style={{ padding: "20px", background: "white", borderTop: "var(--border-thick)" }}>
         <form 
           onSubmit={handleSendMessage}

@@ -14,47 +14,58 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*", // In production, replace with your Vercel URL
+    origin: "*", 
     methods: ["GET", "POST"]
   }
 });
 
-// Middleware
 app.use(cors()); 
 app.use(express.json()); 
 
-// Socket.io Logic
+// Socket.io Logic with Debugging
 io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
+  console.log('DEBUG: Socket Connected:', socket.id);
 
   socket.on('join_room', (taskId) => {
     socket.join(taskId);
-    console.log(`User joined room: ${taskId}`);
+    console.log(`DEBUG: Socket ${socket.id} joined room: ${taskId}`);
   });
 
   socket.on('send_message', async (data) => {
+    console.log('DEBUG: Message Received:', data);
     const { taskId, sender, text, senderName } = data;
     
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
-    // Save to DB
-    const newMessage = new Message({ taskId, sender, text, senderName, time });
-    await newMessage.save();
+    try {
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      // Save to DB
+      const newMessage = new Message({ 
+        taskId, 
+        sender: sender === "anonymous" ? new mongoose.Types.ObjectId() : sender, // Fallback for testing
+        text, 
+        senderName, 
+        time 
+      });
+      
+      await newMessage.save();
+      console.log('DEBUG: Message Saved to DB');
 
-    // Broadcast to the room
-    io.to(taskId).emit('receive_message', newMessage);
+      // Broadcast to the room
+      io.to(taskId).emit('receive_message', newMessage);
+      console.log(`DEBUG: Message Emitted to Room ${taskId}`);
+    } catch (error) {
+      console.error('DEBUG ERROR: Failed to save/send message:', error.message);
+    }
   });
 
   socket.on('disconnect', () => {
-    console.log('User disconnected');
+    console.log('DEBUG: Socket Disconnected');
   });
 });
 
-// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 
-// Get chat history for a task
 app.get('/api/messages/:taskId', async (req, res) => {
   try {
     const messages = await Message.find({ taskId: req.params.taskId }).sort({ createdAt: 1 });
