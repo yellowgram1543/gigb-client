@@ -1,28 +1,42 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 
 export default function Auth({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
-    // 1. Basic Validation (Logic Behavior)
-    if (!email || !password) {
+    if (!email || !password || (!isLogin && !name)) {
       setError("Please fill in all fields!");
+      setIsLoading(false);
       return;
     }
 
-    // 2. Call the Login handler from App.jsx
-    onLogin();
-    
-    // 3. Success -> Redirect to Home
-    navigate("/");
+    try {
+      const endpoint = isLogin ? "/auth/login" : "/auth/register";
+      const payload = isLogin ? { email, password } : { name, email, password };
+      
+      const response = await api.post(endpoint, payload);
+      
+      // Call the Login handler from App.jsx/authStore
+      onLogin(response.data);
+      
+      navigate("/");
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong. Try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -42,7 +56,18 @@ export default function Auth({ onLogin }) {
         </p>
 
         <form onSubmit={handleSubmit}>
-          {/* Email Input */}
+          {!isLogin && (
+            <div style={{ marginBottom: "1.2rem" }}>
+              <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>NAME</label>
+              <input 
+                type="text" 
+                placeholder="Your Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+          )}
+
           <div style={{ marginBottom: "1.2rem" }}>
             <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>EMAIL</label>
             <input 
@@ -50,11 +75,9 @@ export default function Auth({ onLogin }) {
               placeholder="hello@gigb.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              style={{ borderColor: error && !email ? "var(--color-primary)" : "" }}
             />
           </div>
 
-          {/* Password Input */}
           <div style={{ marginBottom: "1.5rem" }}>
             <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>PASSWORD</label>
             <input 
@@ -62,11 +85,9 @@ export default function Auth({ onLogin }) {
               placeholder="••••••••" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={{ borderColor: error && !password ? "var(--color-primary)" : "" }}
             />
           </div>
 
-          {/* Error Message */}
           {error && (
             <p style={{ 
               color: "var(--color-primary)", 
@@ -78,12 +99,10 @@ export default function Auth({ onLogin }) {
             </p>
           )}
 
-          {/* Primary CTA */}
-          <button type="submit" className="btn btn-primary" style={{ width: "100%", marginBottom: "1rem" }}>
-            {isLogin ? "Login Now" : "Sign Up"}
+          <button type="submit" className="btn btn-primary" style={{ width: "100%", marginBottom: "1rem" }} disabled={isLoading}>
+            {isLoading ? "Processing..." : (isLogin ? "Login Now" : "Sign Up")}
           </button>
 
-          {/* Toggle Mode */}
           <p style={{ textAlign: "center", fontWeight: 600, fontSize: "0.9rem" }}>
             {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <span 
