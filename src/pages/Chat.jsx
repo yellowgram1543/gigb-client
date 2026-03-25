@@ -1,11 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { io } from "socket.io-client";
+import api from "../api";
+import useAuthStore from "../store/authStore";
+
+// Connect to the backend socket
+const socket = io(import.meta.env.VITE_API_BASE_URL || "http://localhost:5000");
 
 export default function Chat() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuthStore();
   const [inputText, setInputText] = useState("");
+  const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null);
 
   // Get the task data passed from TaskDetail.jsx
   const task = location.state?.task || {
@@ -13,25 +22,51 @@ export default function Chat() {
     helper: { name: "Helper" }
   };
 
-  // Mock messages
-  const [messages, setMessages] = useState([
-    { id: 1, text: "Hey! I'm ready to start the task.", sender: "helper", time: "10:30 AM" },
-    { id: 2, text: "Great! Please let me know when you arrive.", sender: "user", time: "10:32 AM" },
-    { id: 3, text: "I'm about 5 minutes away.", sender: "helper", time: "10:35 AM" }
-  ]);
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    // 1. Join the room for this task
+    socket.emit("join_room", id);
+
+    // 2. Fetch message history
+    const fetchHistory = async () => {
+      try {
+        const response = await api.get(`/messages/${id}`);
+        setMessages(response.data);
+      } catch (err) {
+        console.error("Error fetching chat history:", err);
+      }
+    };
+    fetchHistory();
+
+    // 3. Listen for incoming messages
+    socket.on("receive_message", (data) => {
+      setMessages((prev) => [...prev, data]);
+    });
+
+    return () => {
+      socket.off("receive_message");
+    };
+  }, [id]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!inputText.trim()) return;
 
-    const newMessage = {
-      id: messages.length + 1,
-      text: inputText,
-      sender: "user",
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    const messageData = {
+      taskId: id,
+      sender: user?._id || "anonymous",
+      senderName: user?.name || "User",
+      text: inputText
     };
 
-    setMessages([...messages, newMessage]);
+    socket.emit("send_message", messageData);
     setInputText("");
   };
 
@@ -42,16 +77,17 @@ export default function Chat() {
       height: "100vh", 
       maxWidth: "600px", 
       margin: "0 auto",
-      background: "transparent"
+      background: "white"
     }}>
       {/* Header */}
       <header style={{ 
-        padding: "20px", 
+        padding: "15px 20px", 
         background: "white", 
         borderBottom: "var(--border-thick)",
         display: "flex",
         alignItems: "center",
-        gap: "15px"
+        gap: "15px",
+        zIndex: 10
       }}>
         <button 
           onClick={() => navigate(-1)} 
@@ -60,7 +96,7 @@ export default function Chat() {
           ←
         </button>
         <div>
-          <h2 style={{ marginBottom: 0 }}>{task.helper?.name}</h2>
+          <h2 style={{ marginBottom: 0, fontSize: "1.2rem" }}>{task.helper?.name || "Task Chat"}</h2>
           <p className="text-small" style={{ opacity: 0.6 }}>{task.title}</p>
         </div>
       </header>
@@ -72,34 +108,40 @@ export default function Chat() {
         padding: "20px", 
         display: "flex", 
         flexDirection: "column", 
-        gap: "15px" 
+        gap: "15px",
+        background: "#f9f9f9"
       }}>
-        {messages.map(msg => (
-          <div 
-            key={msg.id} 
-            style={{ 
-              maxWidth: "80%",
-              alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
-              background: msg.sender === "user" ? "var(--color-lavender)" : "white",
-              padding: "12px 18px",
-              borderRadius: "var(--radius-soft)",
-              border: "var(--border-thick)",
-              boxShadow: "var(--shadow-soft)",
-              position: "relative"
-            }}
-          >
-            <p style={{ fontWeight: 600, fontSize: "1rem" }}>{msg.text}</p>
-            <p style={{ 
-              fontSize: "0.7rem", 
-              fontWeight: 700, 
-              opacity: 0.5, 
-              textAlign: "right",
-              marginTop: "5px"
-            }}>
-              {msg.time}
-            </p>
-          </div>
-        ))}
+        {messages.map((msg, index) => {
+          const isMe = msg.sender === user?._id;
+          return (
+            <div 
+              key={msg._id || index} 
+              style={{ 
+                maxWidth: "80%",
+                alignSelf: isMe ? "flex-end" : "flex-start",
+                background: isMe ? "var(--color-lavender)" : "white",
+                padding: "12px 18px",
+                borderRadius: "var(--radius-soft)",
+                border: "var(--border-thick)",
+                boxShadow: "var(--shadow-soft)",
+                position: "relative"
+              }}
+            >
+              {!isMe && <p style={{ fontSize: "0.7rem", fontWeight: 800, marginBottom: "4px", color: "var(--color-primary)" }}>{msg.senderName}</p>}
+              <p style={{ fontWeight: 600, fontSize: "1rem" }}>{msg.text}</p>
+              <p style={{ 
+                fontSize: "0.7rem", 
+                fontWeight: 700, 
+                opacity: 0.5, 
+                textAlign: "right",
+                marginTop: "5px"
+              }}>
+                {msg.time}
+              </p>
+            </div>
+          );
+        })}
+        <div ref={messagesEndRef} />
       </section>
 
       {/* Input Bar */}
@@ -113,7 +155,7 @@ export default function Chat() {
             placeholder="Type a message..."
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            style={{ borderRadius: "var(--radius-pill)" }}
+            style={{ borderRadius: "var(--radius-pill)", flex: 1, padding: "12px 20px", border: "var(--border-thick)" }}
           />
           <button 
             type="submit" 
