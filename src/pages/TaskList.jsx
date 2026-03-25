@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api";
 import useTaskStore from "../store/taskStore";
 import TaskMap from "../components/TaskMap";
+import Card from "../components/Card";
 
 export default function TaskList() {
   const navigate = useNavigate();
@@ -34,17 +35,19 @@ export default function TaskList() {
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          {taskList.map(task => (
-            <div key={task._id} className="card" onClick={() => navigate(`/task/${task._id}`)} style={{ cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <h3 style={{ fontSize: "1.1rem", marginBottom: "4px" }}>{task.title}</h3>
-                <p className="text-small" style={{ opacity: 0.7 }}>Address: {task.address}</p>
+          {taskList.map((task, index) => (
+            <Card key={task._id} onClick={() => navigate(`/task/${task._id}`)} delay={index * 0.05}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                <div>
+                  <h3 style={{ fontSize: "1.1rem", marginBottom: "4px" }}>{task.title}</h3>
+                  <p className="text-small" style={{ opacity: 0.7 }}>Address: {task.address}</p>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <p style={{ fontWeight: 800, fontSize: "1.2rem", color: "var(--color-primary)" }}>₹{task.budget}</p>
+                  <p className="text-small" style={{ fontWeight: 700 }}>VIEW DETAILS</p>
+                </div>
               </div>
-              <div style={{ textAlign: "right" }}>
-                <p style={{ fontWeight: 800, fontSize: "1.2rem", color: "var(--color-primary)" }}>₹{task.budget}</p>
-                <p className="text-small" style={{ fontWeight: 700 }}>VIEW DETAILS</p>
-              </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}

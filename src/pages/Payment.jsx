@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import api from "../api";
 import useTaskStore from "../store/taskStore";
+import { motion } from "framer-motion";
+import Button from "../components/Button";
 
 export default function Payment() {
   const { id } = useParams();
@@ -57,16 +59,19 @@ export default function Payment() {
   if (isReviewed) {
     return (
       <main style={{ padding: "20px", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
-        <div className="card" style={{ maxWidth: "400px", textAlign: "center", background: "var(--color-mint)" }}>
+        <motion.div 
+          className="card" 
+          style={{ maxWidth: "400px", textAlign: "center", background: "var(--color-mint)" }}
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+        >
           <h2 style={{ fontSize: "3rem", marginBottom: "1rem" }}>✨</h2>
           <h2>Thank You!</h2>
           <p style={{ fontWeight: 600, margin: "1rem 0 2rem" }}>
             Your feedback helps <strong>{task.helper?.name}</strong> grow and helps other users find great help.
           </p>
-          <button className="btn btn-primary" onClick={() => navigate("/")} style={{ width: "100%" }}>
-            Return to Dashboard
-          </button>
-        </div>
+          <Button text="Return to Dashboard" onClick={() => navigate("/")} style={{ width: "100%" }} />
+        </motion.div>
       </main>
     );
   }
@@ -74,7 +79,13 @@ export default function Payment() {
   if (isSuccess) {
     return (
       <main style={{ padding: "20px", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
-        <div className="card" style={{ maxWidth: "450px", width: "100%", textAlign: "center" }}>
+        <motion.div 
+          className="card" 
+          style={{ maxWidth: "450px", width: "100%", textAlign: "center" }}
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", damping: 12 }}
+        >
           <h2 style={{ color: "var(--color-mint)", fontSize: "2.5rem" }}>✓</h2>
           <h1>Payment Successful!</h1>
           <p style={{ fontWeight: 600, color: "#666", marginBottom: "2rem" }}>
@@ -84,7 +95,7 @@ export default function Payment() {
           <form onSubmit={handleReviewSubmit}>
             <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginBottom: "2rem" }}>
               {[1, 2, 3, 4, 5].map((star) => (
-                <button
+                <motion.button
                   key={star}
                   type="button"
                   onClick={() => setRating(star)}
@@ -93,14 +104,13 @@ export default function Payment() {
                     border: "none",
                     fontSize: "2.5rem",
                     cursor: "pointer",
-                    color: star <= rating ? "var(--color-primary)" : "#ddd",
-                    transition: "transform 0.1s"
+                    color: star <= rating ? "var(--color-primary)" : "#ddd"
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.2)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1.0)")}
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
                 >
                   ★
-                </button>
+                </motion.button>
               ))}
             </div>
 
@@ -119,16 +129,13 @@ export default function Payment() {
               }}
             />
 
-            <button 
-              type="submit" 
-              className="btn btn-primary" 
+            <Button 
+              text={isSubmittingReview ? "Submitting..." : "Submit Review"}
               style={{ width: "100%" }}
               disabled={isSubmittingReview || rating === 0}
-            >
-              {isSubmittingReview ? "Submitting..." : "Submit Review"}
-            </button>
+            />
           </form>
-        </div>
+        </motion.div>
       </main>
     );
   }
@@ -167,26 +174,18 @@ export default function Payment() {
       {/* Payment Methods */}
       <h2>Select Method</h2>
       <div style={{ display: "flex", flexDirection: "column", gap: "10px", margin: "1.5rem 0 2.5rem" }}>
-        <button className="btn" style={{ justifyContent: "flex-start", background: "white" }}>
-          Credit or Debit Card
-        </button>
-        <button className="btn" style={{ justifyContent: "flex-start", background: "white" }}>
-          Apple Pay
-        </button>
-        <button className="btn" style={{ justifyContent: "flex-start", background: "white" }}>
-          Google Pay
-        </button>
+        <Button text="Credit or Debit Card" type="secondary" style={{ justifyContent: "flex-start", background: "white" }} />
+        <Button text="Apple Pay" type="secondary" style={{ justifyContent: "flex-start", background: "white" }} />
+        <Button text="Google Pay" type="secondary" style={{ justifyContent: "flex-start", background: "white" }} />
       </div>
 
       {/* Pay Button */}
-      <button 
-        className="btn btn-primary" 
+      <Button 
+        text={isProcessing ? "Processing..." : `Confirm & Pay ₹${task.budget}`}
         style={{ width: "100%", padding: "1.2rem" }}
         onClick={handlePay}
         disabled={isProcessing}
-      >
-        {isProcessing ? "Processing..." : `Confirm & Pay ₹${task.budget}`}
-      </button>
+      />
 
       <p style={{ textAlign: "center", marginTop: "1rem", fontSize: "0.8rem", opacity: 0.6 }}>
         Secure payment powered by GigB
