@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
-
 import useTaskStore from "../store/taskStore";
+import TaskMap from "../components/TaskMap";
 
 export default function TaskList() {
   const navigate = useNavigate();
   const { tasks, loading, fetchTasks } = useTaskStore();
+  const [viewMode, setViewMode] = useState("list"); // "list" or "map"
 
   useEffect(() => {
-    // Only fetch if we don't have tasks yet to avoid redundant calls
     if (tasks.length === 0) {
       fetchTasks();
     }
   }, [tasks.length, fetchTasks]);
 
-  const openTasks = tasks.filter(t => t.status === "OPEN" || t.status === "open");
-  const ongoingTasks = tasks.filter(t => t.status === "ASSIGNED" || t.status === "ongoing");
-  const completedTasks = tasks.filter(t => t.status === "COMPLETED" || t.status === "completed");
+  const openTasks = tasks.filter(t => (t.status === "OPEN" || t.status === "open"));
+  const ongoingTasks = tasks.filter(t => (t.status === "ASSIGNED" || t.status === "ongoing"));
+  const completedTasks = tasks.filter(t => (t.status === "COMPLETED" || t.status === "completed"));
 
   const TaskSection = ({ title, taskList, color }) => (
     <section style={{ marginBottom: "2.5rem" }}>
@@ -59,10 +59,29 @@ export default function TaskList() {
       </header>
 
       <h1>All Tasks</h1>
-      <p style={{ fontWeight: 600, color: "#666", marginBottom: "2.5rem" }}>Track your workflow from open to completed.</p>
+      <p style={{ fontWeight: 600, color: "#666", marginBottom: "1rem" }}>Track your workflow from open to completed.</p>
+
+      <div style={{ display: "flex", gap: "10px", marginBottom: "2.5rem" }}>
+        <button 
+          className={`btn ${viewMode === 'list' ? 'btn-primary' : ''}`} 
+          onClick={() => setViewMode("list")}
+          style={{ flex: 1 }}
+        >
+          List View
+        </button>
+        <button 
+          className={`btn ${viewMode === 'map' ? 'btn-primary' : ''}`} 
+          onClick={() => setViewMode("map")}
+          style={{ flex: 1 }}
+        >
+          Map View
+        </button>
+      </div>
 
       {loading ? (
         <p>Loading tasks...</p>
+      ) : viewMode === "map" ? (
+        <TaskMap tasks={tasks.filter(t => t.location && t.location.lat)} />
       ) : (
         <>
           <TaskSection title="Open" taskList={openTasks} color="var(--color-soft-accent)" />

@@ -10,14 +10,13 @@ const taskSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  address: {
-    type: String,
-    required: true
+  address: { type: String, required: true },
+  location: {
+    lat: { type: Number, required: true },
+    lng: { type: Number, required: true }
   },
-  budget: {
-    type: Number,
-    required: true
-  },
+  budget: { type: Number, required: true },
+
   status: {
     type: String,
     enum: ['OPEN', 'ASSIGNED', 'COMPLETED', 'PAID'],

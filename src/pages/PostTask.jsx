@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
-
 import useTaskStore from "../store/taskStore";
+import LocationPicker from "../components/LocationPicker";
 
 export default function PostTask() {
   const navigate = useNavigate();
@@ -11,13 +11,19 @@ export default function PostTask() {
     title: "",
     description: "",
     address: "",
-    budget: ""
+    budget: "",
+    lat: 12.9716,
+    lng: 77.5946
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleLocationSelect = (lat, lng) => {
+    setFormData({ ...formData, lat, lng });
   };
 
   const handleSubmit = async (e) => {
@@ -31,18 +37,18 @@ export default function PostTask() {
       return;
     }
 
-    if (isNaN(formData.budget) || parseFloat(formData.budget) <= 0) {
-      setError("Please enter a valid budget amount.");
-      setIsSubmitting(false);
-      return;
-    }
-
     try {
       const response = await api.post("/tasks", {
-        ...formData,
-        budget: parseFloat(formData.budget)
+        title: formData.title,
+        description: formData.description,
+        address: formData.address,
+        budget: parseFloat(formData.budget),
+        location: {
+          lat: formData.lat,
+          lng: formData.lng
+        }
       });
-      addTask(response.data); // Update global store immediately
+      addTask(response.data);
       navigate("/");
     } catch (err) {
       console.error("Error saving task:", err);
@@ -68,22 +74,27 @@ export default function PostTask() {
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: "1.2rem" }}>
             <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>TASK TITLE</label>
-            <input name="title" placeholder="e.g., Deliver groceries" value={formData.title} onChange={handleChange} disabled={isSubmitting} style={{ borderColor: error && !formData.title ? "var(--color-primary)" : "" }} />
+            <input name="title" placeholder="e.g., Deliver groceries" value={formData.title} onChange={handleChange} disabled={isSubmitting} />
           </div>
 
           <div style={{ marginBottom: "1.2rem" }}>
             <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>DESCRIPTION</label>
-            <textarea name="description" placeholder="Describe what needs to be done..." value={formData.description} onChange={handleChange} disabled={isSubmitting} style={{ height: "100px", borderColor: error && !formData.description ? "var(--color-primary)" : "" }} />
+            <textarea name="description" placeholder="Describe what needs to be done..." value={formData.description} onChange={handleChange} disabled={isSubmitting} style={{ height: "100px" }} />
+          </div>
+
+          <div style={{ marginBottom: "1.2rem" }}>
+            <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>SELECT LOCATION</label>
+            <LocationPicker onLocationSelect={handleLocationSelect} />
           </div>
 
           <div style={{ marginBottom: "2rem" }}>
-            <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>ADDRESS</label>
-            <textarea name="address" placeholder="Enter your full address here..." value={formData.address} onChange={handleChange} disabled={isSubmitting} style={{ height: "100px", borderColor: error && !formData.address ? "var(--color-primary)" : "" }} />
+            <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>ADDRESS (TEXT)</label>
+            <textarea name="address" placeholder="Enter your full address here..." value={formData.address} onChange={handleChange} disabled={isSubmitting} style={{ height: "80px" }} />
           </div>
 
           <div style={{ marginBottom: "2.5rem" }}>
             <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>BUDGET (₹)</label>
-            <input name="budget" type="number" placeholder="Amount" value={formData.budget} onChange={handleChange} disabled={isSubmitting} style={{ borderColor: error && !formData.budget ? "var(--color-primary)" : "" }} />
+            <input name="budget" type="number" placeholder="Amount" value={formData.budget} onChange={handleChange} disabled={isSubmitting} />
           </div>
 
           {error && <p style={{ color: "var(--color-primary)", fontWeight: 700, textAlign: "center", marginBottom: "1.5rem" }}>{error}</p>}
