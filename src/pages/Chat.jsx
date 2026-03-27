@@ -4,8 +4,11 @@ import { io } from "socket.io-client";
 import api from "../api";
 import useAuthStore from "../store/authStore";
 
-// Connect to the backend socket
-const socket = io("http://localhost:5000");
+// Determine socket url by stripping /api from the active API URL
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const SOCKET_URL = API_URL.replace(/\/api\/?$/, "");
+
+const socket = io(SOCKET_URL);
 
 export default function Chat() {
   const { id } = useParams();
