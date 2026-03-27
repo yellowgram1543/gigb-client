@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api";
 import useTaskStore from "../store/taskStore";
 import LocationPicker from "../components/LocationPicker";
+import { supabase } from "../supabaseClient";
 
 export default function PostTask() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export default function PostTask() {
     lat: 12.9716,
     lng: 77.5946
   });
+  const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -22,8 +24,34 @@ export default function PostTask() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
   const handleLocationSelect = (lat, lng) => {
     setFormData({ ...formData, lat, lng });
+  };
+
+  const uploadImage = async (file) => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = `task-images/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('task-images')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('task-images')
+      .getPublicUrl(filePath);
+
+    return publicUrl;
   };
 
   const handleSubmit = async (e) => {
@@ -38,11 +66,17 @@ export default function PostTask() {
     }
 
     try {
+      let imageUrl = null;
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+      }
+
       const response = await api.post("/tasks", {
         title: formData.title,
         description: formData.description,
         address: formData.address,
         budget: parseFloat(formData.budget),
+        imageUrl: imageUrl,
         location: {
           lat: formData.lat,
           lng: formData.lng
@@ -85,6 +119,11 @@ export default function PostTask() {
           <div style={{ marginBottom: "1.2rem" }}>
             <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>SELECT LOCATION</label>
             <LocationPicker onLocationSelect={handleLocationSelect} />
+          </div>
+
+          <div style={{ marginBottom: "1.2rem" }}>
+            <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>TASK IMAGE (OPTIONAL)</label>
+            <input type="file" accept="image/*" onChange={handleImageChange} disabled={isSubmitting} style={{ border: "none", padding: 0 }} />
           </div>
 
           <div style={{ marginBottom: "2rem" }}>

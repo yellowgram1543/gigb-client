@@ -16,6 +16,7 @@ const taskSchema = new mongoose.Schema({
     lng: { type: Number, required: true }
   },
   budget: { type: Number, required: true },
+  imageUrl: { type: String, default: null },
 
   status: {
     type: String,

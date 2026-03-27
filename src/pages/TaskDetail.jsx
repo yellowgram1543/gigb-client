@@ -66,6 +66,12 @@ export default function TaskDetail() {
         
         <p style={{ fontWeight: 600, marginBottom: "1.5rem" }}>{task.description}</p>
         
+        {task.imageUrl && (
+          <div style={{ marginBottom: "1.5rem", borderRadius: "var(--radius-soft)", overflow: "hidden", border: "var(--border-thick)" }}>
+            <img src={task.imageUrl} alt={task.title} style={{ width: "100%", height: "auto", display: "block" }} />
+          </div>
+        )}
+        
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           <div>
             <p className="text-small">ADDRESS</p>
