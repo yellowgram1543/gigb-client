@@ -130,3 +130,75 @@ h1, h2, h3, h4 {
 }
 
 .text-small { font-size: 0.875rem; font-weight: 700; }
+
+/* 6. Loader Animation */
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid var(--color-peach);
+  border-bottom-color: var(--color-primary);
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 7. Navbar Styles */
+.navbar {
+  position: sticky;
+  top: 20px;
+  z-index: 1000;
+  margin: 0 20px 40px;
+  background: var(--color-white);
+  border: var(--border-thick);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-soft);
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: var(--transition);
+}
+
+.navbar-logo {
+  height: 40px;
+  mix-blend-mode: multiply;
+  cursor: pointer;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.navbar-link {
+  text-decoration: none;
+  color: var(--color-primary);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.navbar-link:hover {
+  color: var(--color-accent-red);
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: 0.5rem 1rem;
+    margin: 0 10px 15px;
+  }
+  .navbar-links {
+    gap: 0.8rem;
+  }
+  .navbar-link {
+    font-size: 0.8rem;
+  }
+}
