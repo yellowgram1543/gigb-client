@@ -31,7 +31,7 @@ export default function Home() {
   const activeCount = tasks.filter(t => t.status !== "COMPLETED" && t.status !== "PAID").length;
 
   return (
-    <main style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
+    <main style={{ padding: "0 20px 20px", maxWidth: "800px", margin: "0 auto" }}>
       <header style={{ 
         display: "flex", 
         justifyContent: "space-between", 
@@ -41,14 +41,10 @@ export default function Home() {
         gap: "1rem"
       }}>
         <div>
-          <h1>Dashboard</h1>
+          <h1 style={{ marginBottom: "0.2rem" }}>Dashboard</h1>
           <p style={{ fontWeight: 600, color: "#666" }}>
             {loading ? "Loading..." : `You have ${activeCount} tasks in progress`}
           </p>
-        </div>
-        <div style={{ display: "flex", gap: "10px" }}>
-          <button className="btn btn-secondary" onClick={() => navigate("/tasks")}>All Tasks</button>
-          <button className="btn btn-primary" onClick={() => navigate("/post-task")}>+ Post Task</button>
         </div>
       </header>
 
@@ -105,12 +101,6 @@ export default function Home() {
           </div>
         )}
       </section>
-
-      <div style={{ marginTop: "3rem", textAlign: "center" }}>
-        <span style={{ cursor: "pointer", fontWeight: 700, textDecoration: "underline" }} onClick={handleLogout}>
-          Logout from account
-        </span>
-      </div>
     </main>
   );
 }

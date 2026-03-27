@@ -47,11 +47,7 @@ export default function TaskDetail() {
   if (!task) return <p style={{ padding: "20px" }}>Task not found.</p>;
 
   return (
-    <main style={{ padding: "20px", maxWidth: "700px", margin: "0 auto" }}>
-      <header style={{ marginBottom: "2rem" }}>
-        <button onClick={() => navigate("/tasks")} style={{ background: "none", border: "none", fontWeight: 700, cursor: "pointer" }}>Back to All Tasks</button>
-      </header>
-
+    <main style={{ padding: "0 20px 20px", maxWidth: "700px", margin: "0 auto" }}>
       <div className="card" style={{ marginBottom: "2rem" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
           <h1 style={{ marginBottom: 0 }}>{task.title}</h1>

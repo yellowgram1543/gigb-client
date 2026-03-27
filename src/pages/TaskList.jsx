@@ -55,12 +55,7 @@ export default function TaskList() {
   );
 
   return (
-    <main style={{ padding: "20px", maxWidth: "800px", margin: "0 auto", height: "100vh", overflowY: "auto" }}>
-      <header style={{ marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <button onClick={() => navigate("/")} style={{ background: "none", border: "none", fontWeight: 700, cursor: "pointer" }}>Back</button>
-        <button className="btn btn-primary" onClick={() => navigate("/post-task")}>+ New Task</button>
-      </header>
-
+    <main style={{ padding: "0 20px 20px", maxWidth: "800px", margin: "0 auto", height: "100vh", overflowY: "auto" }}>
       <h1>All Tasks</h1>
       <p style={{ fontWeight: 600, color: "#666", marginBottom: "1rem" }}>Track your workflow from open to completed.</p>
 

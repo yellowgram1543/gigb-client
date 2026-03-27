@@ -93,14 +93,7 @@ export default function PostTask() {
   };
 
   return (
-    <main style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
-      <button 
-        onClick={() => navigate("/")} 
-        style={{ background: "none", border: "none", fontWeight: 700, cursor: "pointer", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "5px" }}
-      >
-        Back to Dashboard
-      </button>
-
+    <main style={{ padding: "0 20px 20px", maxWidth: "600px", margin: "0 auto" }}>
       <div className="card">
         <h1>Post a Task</h1>
         <p style={{ fontWeight: 600, color: "#666", marginBottom: "2rem" }}>Fill in the details to find someone to help you.</p>

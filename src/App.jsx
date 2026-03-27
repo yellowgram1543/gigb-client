@@ -7,6 +7,7 @@ import TaskList from "./pages/TaskList";
 import TaskDetail from "./pages/TaskDetail";
 import Payment from "./pages/Payment";
 import Chat from "./pages/Chat";
+import Navbar from "./components/Navbar";
 
 import useAuthStore from "./store/authStore";
 
@@ -35,6 +36,7 @@ export default function App() {
 
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route 
           path="/auth" 
