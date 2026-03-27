@@ -97,9 +97,9 @@ export default function TaskList() {
           paddingBottom: "20px",
           alignItems: "flex-start"
         }}>
-          <BoardColumn title="Open" taskList={openTasks} color="var(--color-secondary)" icon="📢" />
-          <BoardColumn title="Ongoing" taskList={ongoingTasks} color="var(--color-lavender)" icon="⚙️" />
-          <BoardColumn title="Completed" taskList={completedTasks} color="var(--color-mint)" icon="✅" />
+          <BoardColumn title="Open" taskList={openTasks} color="var(--color-secondary)" icon="" />
+          <BoardColumn title="Ongoing" taskList={ongoingTasks} color="var(--color-lavender)" icon="" />
+          <BoardColumn title="Completed" taskList={completedTasks} color="var(--color-mint)" icon="" />
         </div>
       )}
     </main>
