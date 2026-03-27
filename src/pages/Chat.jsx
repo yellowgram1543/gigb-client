@@ -62,8 +62,8 @@ export default function Chat() {
 
     const messageData = {
       taskId: id,
-      sender: user?._id || "anonymous",
-      senderName: user?.name || "User",
+      sender: user?.id || "anonymous",
+      senderName: user?.user_metadata?.full_name || "User",
       text: inputText
     };
 
@@ -112,7 +112,7 @@ export default function Chat() {
         background: "#f9f9f9"
       }}>
         {messages.map((msg, index) => {
-          const isMe = msg.sender === user?._id;
+          const isMe = msg.sender === user?.id;
           return (
             <div 
               key={msg._id || index} 
