@@ -16,9 +16,8 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }} onClick={() => navigate("/")}>
+      <div style={{ display: "flex", alignItems: "center", cursor: "pointer" }} onClick={() => navigate("/")}>
         <img src="/logo.png" alt="GigB Logo" className="navbar-logo" />
-        <span style={{ fontWeight: 900, fontSize: "1.2rem", letterSpacing: "-0.05em" }}>GigB</span>
       </div>
 
       <div className="navbar-links">
