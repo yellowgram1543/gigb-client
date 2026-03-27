@@ -1,21 +1,58 @@
 import { create } from "zustand";
+import { supabase } from "../supabaseClient";
 
 const useAuthStore = create((set) => ({
-  user: JSON.parse(localStorage.getItem("user")) || null,
-  token: localStorage.getItem("token") || null,
-  isAuthenticated: !!localStorage.getItem("token"),
+  user: null,
+  session: null,
+  isAuthenticated: false,
+  isLoading: true,
 
-  login: (userData) => {
-    localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("token", userData.token);
-    set({ user: userData, token: userData.token, isAuthenticated: true });
+  setSession: (session) => {
+    set({ 
+      session, 
+      user: session?.user || null, 
+      isAuthenticated: !!session,
+      isLoading: false 
+    });
+    
+    if (session?.access_token) {
+      localStorage.setItem("token", session.access_token);
+    } else {
+      localStorage.removeItem("token");
+    }
   },
 
-  logout: () => {
-    localStorage.removeItem("user");
+  logout: async () => {
+    await supabase.auth.signOut();
     localStorage.removeItem("token");
-    set({ user: null, token: null, isAuthenticated: false });
+    set({ user: null, session: null, isAuthenticated: false });
   },
+
+  initialize: async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (session) {
+      set({ 
+        session, 
+        user: session.user, 
+        isAuthenticated: true,
+        isLoading: false
+      });
+      localStorage.setItem("token", session.access_token);
+    } else {
+      set({ isLoading: false });
+    }
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        set({ session, user: session.user, isAuthenticated: true });
+        localStorage.setItem("token", session.access_token);
+      } else {
+        set({ session: null, user: null, isAuthenticated: false });
+        localStorage.removeItem("token");
+      }
+    });
+  }
 }));
 
 export default useAuthStore;

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api";
+import { supabase } from "../supabaseClient";
 
-export default function Auth({ onLogin }) {
+export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,17 +23,29 @@ export default function Auth({ onLogin }) {
     }
 
     try {
-      const endpoint = isLogin ? "/auth/login" : "/auth/register";
-      const payload = isLogin ? { email, password } : { name, email, password };
-      
-      const response = await api.post(endpoint, payload);
-      
-      // Call the Login handler from App.jsx/authStore
-      onLogin(response.data);
+      if (isLogin) {
+        const { error: loginError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (loginError) throw loginError;
+      } else {
+        const { error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: name,
+            },
+          },
+        });
+        if (signUpError) throw signUpError;
+        alert("Check your email for the confirmation link!");
+      }
       
       navigate("/");
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong. Try again.");
+      setError(err.message || "Something went wrong. Try again.");
     } finally {
       setIsLoading(false);
     }

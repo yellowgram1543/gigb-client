@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
+import useAuthStore from "../store/authStore";
 
-export default function Home({ onLogout }) {
+export default function Home() {
   const navigate = useNavigate();
+  const { logout } = useAuthStore();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -20,6 +22,11 @@ export default function Home({ onLogout }) {
     };
     fetchTasks();
   }, []);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/auth");
+  };
 
   const activeCount = tasks.filter(t => t.status !== "COMPLETED" && t.status !== "PAID").length;
 
@@ -100,7 +107,7 @@ export default function Home({ onLogout }) {
       </section>
 
       <div style={{ marginTop: "3rem", textAlign: "center" }}>
-        <span style={{ cursor: "pointer", fontWeight: 700, textDecoration: "underline" }} onClick={() => { onLogout(); navigate("/auth"); }}>
+        <span style={{ cursor: "pointer", fontWeight: 700, textDecoration: "underline" }} onClick={handleLogout}>
           Logout from account
         </span>
       </div>

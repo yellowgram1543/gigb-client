@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
@@ -11,19 +11,39 @@ import Chat from "./pages/Chat";
 import useAuthStore from "./store/authStore";
 
 export default function App() {
-  const { isAuthenticated, login, logout } = useAuthStore();
+  const { isAuthenticated, initialize, isLoading } = useAuthStore();
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  if (isLoading) {
+    return (
+      <div style={{ 
+        height: "100vh", 
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: "center",
+        flexDirection: "column",
+        gap: "1rem"
+      }}>
+        <div className="loader"></div>
+        <p style={{ fontWeight: 600 }}>Loading GigB...</p>
+      </div>
+    );
+  }
 
   return (
     <Router>
       <Routes>
         <Route 
           path="/auth" 
-          element={isAuthenticated ? <Navigate to="/" /> : <Auth onLogin={login} />} 
+          element={isAuthenticated ? <Navigate to="/" /> : <Auth />} 
         />
 
         <Route 
           path="/" 
-          element={isAuthenticated ? <Home onLogout={logout} /> : <Navigate to="/auth" />} 
+          element={isAuthenticated ? <Home /> : <Navigate to="/auth" />} 
         />
 
         <Route 
