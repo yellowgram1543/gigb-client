@@ -29,29 +29,42 @@ const useAuthStore = create((set) => ({
   },
 
   initialize: async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (session) {
-      set({ 
-        session, 
-        user: session.user, 
-        isAuthenticated: true,
-        isLoading: false
-      });
-      localStorage.setItem("token", session.access_token);
-    } else {
-      set({ isLoading: false });
-    }
+    try {
+      console.log("DEBUG: Initializing Supabase Auth...");
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) throw error;
 
-    supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        set({ session, user: session.user, isAuthenticated: true });
+        console.log("DEBUG: Session found, user is authenticated.");
+        set({ 
+          session, 
+          user: session.user, 
+          isAuthenticated: true,
+          isLoading: false
+        });
         localStorage.setItem("token", session.access_token);
       } else {
-        set({ session: null, user: null, isAuthenticated: false });
-        localStorage.removeItem("token");
+        console.log("DEBUG: No active session found.");
+        set({ isLoading: false, isAuthenticated: false });
       }
-    });
+
+      // Start listening for changes after the initial check
+      supabase.auth.onAuthStateChange((_event, session) => {
+        console.log("DEBUG: Auth State Changed:", _event);
+        if (session) {
+          set({ session, user: session.user, isAuthenticated: true, isLoading: false });
+          localStorage.setItem("token", session.access_token);
+        } else {
+          set({ session: null, user: null, isAuthenticated: false, isLoading: false });
+          localStorage.removeItem("token");
+        }
+      });
+
+    } catch (err) {
+      console.error("DEBUG ERROR: Supabase initialization failed:", err.message);
+      set({ isLoading: false, isAuthenticated: false });
+    }
   }
 }));
 
