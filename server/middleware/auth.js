@@ -24,7 +24,8 @@ const protect = async (req, res, next) => {
         user = await User.create({
           supabaseId: decoded.sub,
           email: decoded.email,
-          name: decoded.user_metadata?.full_name || 'GigB User'
+          name: decoded.user_metadata?.full_name || 'GigB User',
+          role: decoded.user_metadata?.role || 'user'
         });
       }
 
