@@ -63,7 +63,7 @@ export default function Auth() {
         <h1 style={{ textAlign: "center", marginBottom: "0.5rem" }}>
           {isLogin ? "Welcome Back!" : "Join GigB"}
         </h1>
-        <p style={{ textAlign: "center", marginBottom: "2rem", fontWeight: 600, color: "#666" }}>
+        <p style={{ textAlign: "center", marginBottom: "2rem", fontWeight: 700, opacity: 0.8 }}>
           {isLogin ? "Login to your account" : "Create a new account to start"}
         </p>
 
@@ -101,25 +101,30 @@ export default function Auth() {
           </div>
 
           {error && (
-            <p style={{ 
-              color: "var(--color-primary)", 
-              fontWeight: 700, 
-              textAlign: "center", 
-              marginBottom: "1rem" 
+            <div style={{ 
+              background: "var(--color-peach)", 
+              border: "var(--border-thick)",
+              borderRadius: "10px",
+              padding: "10px",
+              marginBottom: "1.5rem" 
             }}>
-              {error}
-            </p>
+              <p style={{ color: "var(--color-text)", fontWeight: 800, textAlign: "center", margin: 0 }}>
+                {error}
+              </p>
+            </div>
           )}
 
-          <button type="submit" className="btn btn-primary" style={{ width: "100%", marginBottom: "1rem" }} disabled={isLoading}>
+          <button type="submit" className="btn btn-primary" style={{ width: "100%" }} disabled={isLoading}>
             {isLoading ? "Processing..." : (isLogin ? "Login Now" : "Sign Up")}
           </button>
+          
+          <div className="dashed-divider" style={{ margin: "2rem 0" }}></div>
 
-          <p style={{ textAlign: "center", fontWeight: 600, fontSize: "0.9rem" }}>
+          <p style={{ textAlign: "center", fontWeight: 700, fontSize: "0.9rem" }}>
             {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <span 
               onClick={() => { setIsLogin(!isLogin); setError(""); }}
-              style={{ color: "var(--color-primary)", cursor: "pointer", textDecoration: "underline" }}
+              style={{ color: "var(--color-text)", background: "var(--color-yellow)", padding: "2px 8px", borderRadius: "8px", border: "2px solid var(--color-text)", cursor: "pointer" }}
             >
               {isLogin ? "Sign Up" : "Log In"}
             </span>
