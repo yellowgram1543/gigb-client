@@ -1,23 +1,25 @@
 /* 1. Color System & Variables */
 :root {
-  --color-primary: #003366;      /* Dark Blue: Main text/headings */
-  --color-accent-red: #E63946;   /* Red: Danger/Action */
-  --color-accent-pink: #FF85A1;  /* Pink: Secondary Action */
-  --color-peach: #FFD1B3;        /* Peach: Warm surfaces */
-  --color-cream: #FFFDF5;        /* Cream: Cards/Inputs */
-  --color-bg-light: #E0F2FE;     /* Light Blue: Page Background */
+  --color-primary: #1A1A1A;      /* Main text/headings/borders */
+  --color-accent-purple: #B5A1FF; /* Lavender/Light Purple bg */
+  --color-mint: #98E2C6;         /* Mint green buttons/accents */
+  --color-peach: #FFD6A5;        /* Peach: Warm surfaces */
+  --color-yellow: #FBEF8F;       /* Soft Yellow */
+  --color-blue: #B3E0FF;         /* Light Blue buttons */
+  --color-cream: #FFFAF0;        /* Off-white cards */
+  --color-bg-light: #E8E5FA;     /* Very Light purple background */
   
-  --color-text: #001F3F;         /* Very Dark Blue */
+  --color-text: #171717;         /* Very Dark Gray/Black */
   --color-white: #FFFFFF;
   
-  --border-thick: 3px solid var(--color-text);
+  --border-thick: 2px solid var(--color-text);
   --radius-pill: 50px;
-  --radius-soft: 20px;
+  --radius-soft: 16px;
   
-  --shadow-soft: 0 6px 0 rgba(0, 31, 63, 0.15);
-  --shadow-hover: 0 10px 0 rgba(0, 31, 63, 0.2);
+  --shadow-soft: 4px 4px 0px 0px var(--color-text);
+  --shadow-hover: 6px 6px 0px 0px var(--color-text);
   
-  --transition: all 0.25s ease-in-out;
+  --transition: all 0.2s ease-in-out;
 }
 
 /* 2. Global Resets & Typography */
@@ -39,7 +41,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 3. Signature Background: Light Blue Pastel */
+/* 3. Signature Background: Light Purple Pastel */
 body::before {
   content: "";
   position: fixed;
@@ -48,7 +50,7 @@ body::before {
   width: 100%;
   height: 100%;
   z-index: -2;
-  background: var(--color-bg-light);
+  background: linear-gradient(135deg, #EBEBFF 0%, #DEDCFF 100%);
   filter: none;
 }
 
@@ -56,16 +58,17 @@ body::before {
 
 /* 4.1 Cards */
 .card {
-  background: var(--color-cream);
+  background: var(--color-white);
   border: var(--border-thick);
   border-radius: var(--radius-soft);
   padding: 1.5rem;
   box-shadow: var(--shadow-soft);
   transition: var(--transition);
+  position: relative;
 }
 
 .card:hover {
-  transform: translateY(-4px);
+  transform: translate(-2px, -2px);
   box-shadow: var(--shadow-hover);
 }
 
@@ -77,29 +80,42 @@ body::before {
   padding: 0.8rem 1.8rem;
   font-weight: 700;
   border: var(--border-thick);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-soft);
   cursor: pointer;
   transition: var(--transition);
   text-decoration: none;
   font-family: 'Nunito', sans-serif;
-}
-
-.btn:active {
-  transform: scale(0.96);
-}
-
-.btn-primary {
-  background: var(--color-accent-pink);
+  box-shadow: 3px 3px 0px 0px var(--color-text);
   color: var(--color-text);
 }
 
+.btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0px 0px var(--color-text);
+}
+
+.btn-primary {
+  background: var(--color-blue);
+}
+
 .btn-primary:hover {
-  background: var(--color-peach);
+  background: #99D1F2;
 }
 
 .btn-secondary {
-  background: var(--color-accent-red);
-  color: white;
+  background: var(--color-mint);
+}
+
+.btn-secondary:hover {
+  background: #85D4B6;
+}
+
+.btn-peach {
+  background: var(--color-peach);
+}
+
+.btn-peach:hover {
+  background: #F2C48D;
 }
 
 /* 4.3 Input Fields */
@@ -113,11 +129,13 @@ input, textarea {
   transition: var(--transition);
   outline: none;
   background: var(--color-white);
+  color: var(--color-text);
 }
 
-input:focus {
-  border-color: var(--color-primary);
-  background: var(--color-cream);
+input:focus, textarea:focus {
+  background: var(--color-white);
+  box-shadow: 4px 4px 0px 0px var(--color-yellow);
+  transform: translate(-2px, -2px);
 }
 
 /* 5. Utility Typography */
@@ -126,7 +144,7 @@ h1, h2, h3, h4 {
   font-weight: 900;
   letter-spacing: -0.01em;
   margin-bottom: 1rem;
-  color: var(--color-primary);
+  color: var(--color-text);
 }
 
 .text-small { font-size: 0.875rem; font-weight: 700; }
@@ -135,12 +153,15 @@ h1, h2, h3, h4 {
 .loader {
   width: 48px;
   height: 48px;
-  border: 5px solid var(--color-peach);
-  border-bottom-color: var(--color-primary);
+  border: 5px solid var(--border-text);
+  border-bottom-color: transparent;
   border-radius: 50%;
   display: inline-block;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
+  border-top-color: var(--color-text);
+  border-left-color: var(--color-text);
+  border-right-color: var(--color-text);
 }
 
 @keyframes rotation {
@@ -169,6 +190,7 @@ h1, h2, h3, h4 {
   height: 40px;
   mix-blend-mode: multiply;
   cursor: pointer;
+  border-radius: 8px;
 }
 
 .navbar-links {
@@ -179,15 +201,16 @@ h1, h2, h3, h4 {
 
 .navbar-link {
   text-decoration: none;
-  color: var(--color-primary);
+  color: var(--color-text);
   font-family: 'Nunito', sans-serif;
   font-weight: 800;
   font-size: 0.9rem;
   transition: var(--transition);
+  border-bottom: 2px solid transparent;
 }
 
 .navbar-link:hover {
-  color: var(--color-accent-red);
+  border-bottom: 2px solid var(--color-text);
 }
 
 @media (max-width: 600px) {
@@ -201,4 +224,27 @@ h1, h2, h3, h4 {
   .navbar-link {
     font-size: 0.8rem;
   }
+}
+
+/* 8. Additional Neo-brutalism elements */
+.badge {
+  padding: 0.3rem 0.8rem;
+  border: var(--border-thick);
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 0.8rem;
+  box-shadow: 2px 2px 0px 0px var(--color-text);
+  background: var(--color-white);
+  display: inline-block;
+}
+
+.badge-mint { background: var(--color-mint); }
+.badge-yellow { background: var(--color-yellow); }
+.badge-peach { background: var(--color-peach); }
+.badge-purple { background: var(--color-accent-purple); }
+
+.dashed-divider {
+  border-top: 2px dashed var(--color-text);
+  margin: 1.5rem 0;
+  width: 100%;
 }
