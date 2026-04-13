@@ -1,19 +1,47 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 import useTaskStore from "../store/taskStore";
 
 export default function TaskList() {
   const navigate = useNavigate();
-  const { tasks, loading, fetchTasks } = useTaskStore();
+  const { tasks, loading, fetchTasks, updateTask } = useTaskStore();
+  const [processingId, setProcessingId] = useState(null);
 
   useEffect(() => {
     fetchTasks();
   }, [fetchTasks]);
 
+  const handleConfirmPoster = async (e, taskId) => {
+    e.stopPropagation();
+    setProcessingId(taskId);
+    try {
+      const response = await api.patch(`/tasks/${taskId}/confirm-poster`);
+      updateTask(response.data);
+    } catch (err) {
+      console.error("Confirmation failed:", err);
+      alert("Failed to confirm completion. System error.");
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
   const openTasks = tasks.filter(t => t.status === "OPEN");
   const ongoingTasks = tasks.filter(t => t.status === "ASSIGNED");
   const completedTasks = tasks.filter(t => t.status === "COMPLETED" || t.status === "PAID");
+
+  const EscrowBadge = ({ task }) => {
+    if (task.escrow_status === "locked") {
+      return <span className="badge-neo bg-primary-container text-[7px] mb-2 block w-fit">💰 Escrow Locked</span>;
+    }
+    if (task.escrow_status === "released") {
+      return <span className="badge-neo bg-secondary-container text-[7px] mb-2 block w-fit">✅ Paid</span>;
+    }
+    if (task.escrow_status === "refunded") {
+      return <span className="badge-neo bg-error-container text-[7px] mb-2 block w-fit">↩ Refunded</span>;
+    }
+    return null;
+  };
 
   const BoardColumn = ({ title, taskList, colorClass, icon }) => (
     <div className={`flex-1 min-w-[320px] bg-surface-container neo-border p-6 shadow-[8px_8px_0px_0px_rgba(48,52,44,1)] flex flex-col gap-6 h-full`}>
@@ -38,16 +66,38 @@ export default function TaskList() {
               className="card-neo p-4 cursor-pointer hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(48,52,44,1)] transition-all bg-surface-container-lowest"
               onClick={() => navigate(`/task/${task._id}`)}
             >
-              <div className="flex justify-between items-center mb-4">
-                <span className="neo-border bg-surface-container-lowest px-2 py-0.5 font-headline font-black text-sm shadow-[2px_2px_0px_0px_rgba(48,52,44,1)]">
-                  ₹{task.budget}
-                </span>
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <EscrowBadge task={task} />
+                  <span className="neo-border bg-surface-container-lowest px-2 py-0.5 font-headline font-black text-sm shadow-[2px_2px_0px_0px_rgba(48,52,44,1)]">
+                    ₹{task.budget}
+                  </span>
+                </div>
                 <span className="font-headline font-black text-[10px] uppercase opacity-40">#{task._id.slice(-4)}</span>
               </div>
               <h3 className="text-xl mb-3 leading-tight uppercase line-clamp-2">{task.title}</h3>
               <p className="font-body text-xs opacity-70 line-clamp-2 mb-4">
                 {task.description}
               </p>
+
+              {task.status === "ASSIGNED" && (
+                <div className="mb-4">
+                  {task.payment_confirmed_poster ? (
+                    <div className="bg-surface-container neo-border p-2 text-center">
+                       <p className="font-headline font-black text-[8px] uppercase m-0 animate-pulse">Waiting for Helper confirmation...</p>
+                    </div>
+                  ) : (
+                    <button 
+                      className="btn-neo-secondary w-full bg-secondary-container py-2 text-[10px]"
+                      onClick={(e) => handleConfirmPoster(e, task._id)}
+                      disabled={processingId === task._id}
+                    >
+                      {processingId === task._id ? "TRANSMITTING..." : "CONFIRM COMPLETION →"}
+                    </button>
+                  )}
+                </div>
+              )}
+
               <div className="flex justify-between items-center pt-4 border-t-[3px] border-on-surface border-dashed">
                  <span className={`badge-neo ${colorClass} text-[9px] px-2 py-0.5`}>DETAILS →</span>
                  {task.imageUrl && <span className="material-symbols-outlined text-sm">image</span>}
