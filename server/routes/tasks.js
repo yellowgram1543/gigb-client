@@ -191,4 +191,39 @@ router.patch('/:id/refund', protect, async (req, res) => {
   }
 });
 
+// 9. GET HELPER EARNINGS
+router.get('/earnings/:helperId', protect, async (req, res) => {
+  try {
+    const { helperId } = req.params;
+
+    // Verify authorization: req.user._id must match helperId
+    if (req.user._id.toString() !== helperId) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    // Query for all tasks associated with this helper
+    const helperTasks = await Task.find({ helperId: helperId });
+
+    let totalEarned = 0;
+    let pending = 0;
+    const completedGigs = [];
+
+    helperTasks.forEach(task => {
+      if (task.escrow_status === "released") {
+        totalEarned += task.escrow_amount || 0;
+      }
+      if (task.escrow_status === "locked") {
+        pending += task.escrow_amount || 0;
+      }
+      if (task.status === "COMPLETED") {
+        completedGigs.push(task);
+      }
+    });
+
+    res.status(200).json({ totalEarned, pending, completedGigs });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export default router;
