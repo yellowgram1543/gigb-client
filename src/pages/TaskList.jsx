@@ -15,95 +15,71 @@ export default function TaskList() {
   const ongoingTasks = tasks.filter(t => t.status === "ASSIGNED");
   const completedTasks = tasks.filter(t => t.status === "COMPLETED" || t.status === "PAID");
 
-  const BoardColumn = ({ title, taskList, color, icon }) => (
-    <div style={{ 
-      flex: 1, 
-      minWidth: "300px", 
-      background: "var(--color-white)", 
-      borderRadius: "var(--radius-soft)", 
-      padding: "20px",
-      border: "var(--border-thick)",
-      boxShadow: "var(--shadow-soft)",
-      display: "flex",
-      flexDirection: "column",
-      gap: "20px"
-    }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem", borderBottom: "var(--border-thick)", paddingBottom: "10px" }}>
-        <h2 style={{ fontSize: "1.2rem", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-          {icon} {title}
+  const BoardColumn = ({ title, taskList, colorClass, icon }) => (
+    <div className={`flex-1 min-w-[320px] bg-surface-container neo-border p-6 shadow-[8px_8px_0px_0px_rgba(48,52,44,1)] flex flex-col gap-6 h-full`}>
+      <div className="flex justify-between items-center pb-4 border-b-[3px] border-on-surface border-dashed">
+        <h2 className="text-2xl uppercase flex items-center gap-3 m-0">
+          <span className="material-symbols-outlined">{icon}</span> {title}
         </h2>
-        <span style={{ 
-          background: color, 
-          padding: "2px 10px", 
-          borderRadius: "10px", 
-          fontWeight: 800, 
-          fontSize: "0.9rem",
-          border: "var(--border-thick)",
-          boxShadow: "2px 2px 0px 0px var(--color-text)"
-        }}>
+        <span className={`badge-neo ${colorClass} text-base px-3 py-1 shadow-[2px_2px_0px_0px_rgba(48,52,44,1)]`}>
           {taskList.length}
         </span>
       </div>
 
-      {taskList.length === 0 ? (
-        <div style={{ padding: "40px 20px", textAlign: "center", border: "2px dashed var(--color-text)", borderRadius: "var(--radius-soft)", background: "var(--color-bg-light)" }}>
-          <p className="text-small" style={{ fontWeight: 700 }}>No tasks here yet.</p>
-        </div>
-      ) : (
-        taskList.map(task => (
-          <div 
-            key={task._id} 
-            className="card" 
-            style={{ padding: "15px", cursor: "pointer", background: "var(--color-cream)" }}
-            onClick={() => navigate(`/task/${task._id}`)}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-              <p className="text-small" style={{ fontWeight: 800, background: "var(--color-white)", padding: "2px 8px", borderRadius: "10px", border: "var(--border-thick)", boxShadow: "2px 2px 0px 0px var(--color-text)" }}>₹{task.budget}</p>
-              <p className="text-small" style={{ opacity: 0.8, fontWeight: 700 }}>#{task._id.slice(-4)}</p>
-            </div>
-            <h3 style={{ fontSize: "1.1rem", marginBottom: "8px", lineHeight: "1.3" }}>{task.title}</h3>
-            <p className="text-small" style={{ 
-              opacity: 0.8, 
-              display: "-webkit-box", 
-              WebkitLineClamp: 2, 
-              WebkitBoxOrient: "vertical", 
-              overflow: "hidden",
-            }}>
-              {task.description}
-            </p>
-            <div className="dashed-divider" style={{ margin: "12px 0" }}></div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-               <span className="text-small" style={{ fontSize: "0.75rem", fontWeight: 800, background: color, padding: "4px 8px", borderRadius: "8px", border: "2px solid var(--color-text)" }}>DETAILS →</span>
-               {task.imageUrl && <span style={{ fontSize: "1.2rem", filter: "drop-shadow(2px 2px 0px var(--color-text))" }}>🖼️</span>}
-            </div>
+      <div className="flex flex-col gap-6 overflow-y-auto max-h-[70vh] pr-2 custom-scrollbar">
+        {taskList.length === 0 ? (
+          <div className="py-12 text-center border-4 border-dashed border-on-surface opacity-30">
+            <p className="font-headline font-black uppercase text-xs">Zero Signal</p>
           </div>
-        ))
-      )}
+        ) : (
+          taskList.map(task => (
+            <div 
+              key={task._id} 
+              className="card-neo p-4 cursor-pointer hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(48,52,44,1)] transition-all bg-surface-container-lowest"
+              onClick={() => navigate(`/task/${task._id}`)}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <span className="neo-border bg-surface-container-lowest px-2 py-0.5 font-headline font-black text-sm shadow-[2px_2px_0px_0px_rgba(48,52,44,1)]">
+                  ₹{task.budget}
+                </span>
+                <span className="font-headline font-black text-[10px] uppercase opacity-40">#{task._id.slice(-4)}</span>
+              </div>
+              <h3 className="text-xl mb-3 leading-tight uppercase line-clamp-2">{task.title}</h3>
+              <p className="font-body text-xs opacity-70 line-clamp-2 mb-4">
+                {task.description}
+              </p>
+              <div className="flex justify-between items-center pt-4 border-t-[3px] border-on-surface border-dashed">
+                 <span className={`badge-neo ${colorClass} text-[9px] px-2 py-0.5`}>DETAILS →</span>
+                 {task.imageUrl && <span className="material-symbols-outlined text-sm">image</span>}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 
   return (
-    <main style={{ padding: "0 20px 40px", maxWidth: "1200px", margin: "0 auto" }}>
-      <header style={{ marginBottom: "2.5rem", background: "var(--color-white)", padding: "2rem", borderRadius: "var(--radius-soft)", border: "var(--border-thick)", boxShadow: "var(--shadow-soft)", marginTop: "20px" }}>
-        <h1 style={{ marginBottom: "0.5rem" }}>Task Board 📌</h1>
-        <p style={{ fontWeight: 700, margin: 0 }}>Track and manage the progress of your neighborhood gigs.</p>
+    <div className="max-w-7xl mx-auto space-y-10">
+      <header className="card-neo bg-primary-container relative">
+        <div className="absolute -top-4 -right-4 badge-neo bg-tertiary-container px-4 py-1 text-xs">
+          COMMAND CENTER
+        </div>
+        <h1 className="text-5xl uppercase mb-2">Operation Control 📌</h1>
+        <p className="font-headline font-bold text-lg uppercase tracking-tight opacity-80">Track and manage the progress of your active neighborhood engagements.</p>
       </header>
 
       {loading ? (
-        <div className="loader" style={{ margin: "100px auto", display: "block" }}></div>
+        <div className="flex justify-center py-40">
+           <div className="loader border-[6px] border-on-surface border-b-transparent rounded-full w-16 h-16 animate-spin"></div>
+        </div>
       ) : (
-        <div style={{ 
-          display: "flex", 
-          gap: "30px", 
-          overflowX: "auto", 
-          paddingBottom: "20px",
-          alignItems: "flex-start"
-        }}>
-          <BoardColumn title="Open" taskList={openTasks} color="var(--color-peach)"/>
-          <BoardColumn title="Ongoing" taskList={ongoingTasks} color="var(--color-yellow)" />
-          <BoardColumn title="Completed" taskList={completedTasks} color="var(--color-mint)" />
+        <div className="flex gap-10 overflow-x-auto pb-10 items-start scrollbar-hide">
+          <BoardColumn title="Pending" taskList={openTasks} colorClass="bg-tertiary-container" icon="pending_actions"/>
+          <BoardColumn title="In-Progress" taskList={ongoingTasks} colorClass="bg-primary-container" icon="engineering" />
+          <BoardColumn title="Completed" taskList={completedTasks} colorClass="bg-secondary-container" icon="check_circle" />
         </div>
       )}
-    </main>
+    </div>
   );
 }

@@ -20,61 +20,58 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div style={{ 
-        height: "100vh", 
-        display: "flex", 
-        alignItems: "center", 
-        justifyContent: "center",
-        flexDirection: "column",
-        gap: "1rem"
-      }}>
-        <div className="loader"></div>
-        <p style={{ fontWeight: 600 }}>Loading GigB...</p>
+      <div className="h-screen flex flex-col items-center justify-center gap-4 bg-surface">
+        <div className="loader border-[5px] border-on-surface border-b-transparent rounded-full w-12 h-12 animate-spin"></div>
+        <p className="font-headline font-black uppercase tracking-tighter">Loading GigB...</p>
       </div>
     );
   }
 
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        <Route 
-          path="/auth" 
-          element={isAuthenticated ? <Navigate to="/" /> : <Auth />} 
-        />
+      <div className="flex flex-col md:flex-row min-h-screen bg-surface">
+        <Navbar />
+        <main className="flex-grow p-4 md:p-8 md:ml-64 mb-20 md:mb-0">
+          <Routes>
+            <Route 
+              path="/auth" 
+              element={isAuthenticated ? <Navigate to="/" /> : <Auth />} 
+            />
 
-        <Route 
-          path="/" 
-          element={isAuthenticated ? <Home /> : <Navigate to="/auth" />} 
-        />
+            <Route 
+              path="/" 
+              element={isAuthenticated ? <Home /> : <Navigate to="/auth" />} 
+            />
 
-        <Route 
-          path="/post-task" 
-          element={isAuthenticated ? <PostTask /> : <Navigate to="/auth" />} 
-        />
+            <Route 
+              path="/post-task" 
+              element={isAuthenticated ? <PostTask /> : <Navigate to="/auth" />} 
+            />
 
-        <Route 
-          path="/tasks" 
-          element={isAuthenticated ? <TaskList /> : <Navigate to="/auth" />} 
-        />
+            <Route 
+              path="/tasks" 
+              element={isAuthenticated ? <TaskList /> : <Navigate to="/auth" />} 
+            />
 
-        <Route 
-          path="/task/:id" 
-          element={isAuthenticated ? <TaskDetail /> : <Navigate to="/auth" />} 
-        />
+            <Route 
+              path="/task/:id" 
+              element={isAuthenticated ? <TaskDetail /> : <Navigate to="/auth" />} 
+            />
 
-        <Route 
-          path="/payment/:id" 
-          element={isAuthenticated ? <Payment /> : <Navigate to="/auth" />} 
-        />
+            <Route 
+              path="/payment/:id" 
+              element={isAuthenticated ? <Payment /> : <Navigate to="/auth" />} 
+            />
 
-        <Route 
-          path="/chat/:id" 
-          element={isAuthenticated ? <Chat /> : <Navigate to="/auth" />} 
-        />
+            <Route 
+              path="/chat/:id" 
+              element={isAuthenticated ? <Chat /> : <Navigate to="/auth" />} 
+            />
 
-        <Route path="*" element={<Navigate to="/auth" />} />
-      </Routes>
+            <Route path="*" element={<Navigate to="/auth" />} />
+          </Routes>
+        </main>
+      </div>
     </Router>
   );
 }

@@ -9,7 +9,6 @@ export default function PostTask() {
   const navigate = useNavigate();
   const addTask = useTaskStore((state) => state.addTask);
   
-  // Form State
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     title: "",
@@ -23,7 +22,6 @@ export default function PostTask() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Handlers
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -40,11 +38,11 @@ export default function PostTask() {
 
   const nextStep = () => {
     if (step === 1 && (!formData.title || !formData.description)) {
-      setError("Please fill in the title and description first!");
+      setError("Incomplete briefing. Provide title and description.");
       return;
     }
     if (step === 2 && !formData.address) {
-      setError("Please provide an address for the task.");
+      setError("Location coordinates missing. Provide an address.");
       return;
     }
     setError("");
@@ -77,7 +75,7 @@ export default function PostTask() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.budget) {
-      setError("Please set a budget for your task.");
+      setError("Budget not set. Assign a value.");
       return;
     }
 
@@ -101,134 +99,180 @@ export default function PostTask() {
       navigate("/");
     } catch (err) {
       console.error("Error saving task:", err);
-      setError("Failed to save task. Please try again.");
+      setError("Launch failed. System error.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Render Helpers
   const renderProgressBar = () => (
-    <div style={{ display: "flex", gap: "10px", marginBottom: "2rem", justifyContent: "center" }}>
+    <div className="flex gap-4 mb-12 justify-center">
       {[1, 2, 3].map((s) => (
         <div 
           key={s} 
-          style={{ 
-            height: "12px", 
-            width: "60px", 
-            borderRadius: "10px", 
-            background: step >= s ? "var(--color-text)" : "var(--color-white)",
-            border: "var(--border-thick)",
-            boxShadow: "2px 2px 0px 0px var(--color-text)",
-            transition: "all 0.3s ease"
-          }} 
+          className={`h-4 w-16 neo-border transition-all duration-300 ${
+            step >= s ? "bg-on-surface shadow-[2px_2px_0px_0px_rgba(243,227,145,1)]" : "bg-surface-container-lowest shadow-[2px_2px_0px_0px_rgba(48,52,44,1)]"
+          }`} 
         />
       ))}
     </div>
   );
 
   return (
-    <main style={{ padding: "0 20px 20px", maxWidth: "600px", margin: "0 auto" }}>
-      <div className="card" style={{ minHeight: "450px", display: "flex", flexDirection: "column" }}>
-        
+    <div className="max-w-2xl mx-auto py-8">
+      <div className="card-neo bg-surface-container-lowest relative">
+        <div className="absolute -top-4 -right-4 badge-neo bg-tertiary-container px-4 py-1 text-xs">
+          STEP {step} OF 3
+        </div>
+
         {renderProgressBar()}
 
-        <h1 style={{ textAlign: "center", fontSize: "1.8rem" }}>
-          {step === 1 && "What do you need help with?"}
-          {step === 2 && "Where and When?"}
-          {step === 3 && "Set your Budget"}
-        </h1>
+        <header className="mb-8 text-center">
+          <h1 className="text-4xl uppercase mb-2">
+            {step === 1 && "The Briefing"}
+            {step === 2 && "The Deployment"}
+            {step === 3 && "The Investment"}
+          </h1>
+          <p className="font-headline font-black text-[10px] uppercase tracking-[0.2em] opacity-50">
+            {step === 1 && "Specify the requirements for your task"}
+            {step === 2 && "Where should the force be deployed?"}
+            {step === 3 && "Set the value for this engagement"}
+          </p>
+        </header>
         
-        <div className="dashed-divider"></div>
+        <div className="border-t-[3px] border-on-surface border-dashed my-8"></div>
 
-        <div style={{ flex: 1, marginTop: "1rem" }}>
+        <div className="min-h-[400px]">
           {/* STEP 1: BASICS */}
           {step === 1 && (
-            <div className="fade-in">
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>TASK TITLE</label>
-                <input name="title" placeholder="e.g., Fix my leaking sink" value={formData.title} onChange={handleChange} />
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div>
+                <label className="font-headline font-black text-xs uppercase mb-2 block tracking-widest">GIG TITLE</label>
+                <input 
+                  name="title" 
+                  placeholder="E.G., EMERGENCY PLUMBING FIX" 
+                  className="input-neo w-full uppercase font-bold tracking-tighter"
+                  value={formData.title} 
+                  onChange={handleChange} 
+                />
               </div>
               <div>
-                <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>DESCRIPTION</label>
-                <textarea name="description" placeholder="Describe the job in detail..." value={formData.description} onChange={handleChange} style={{ height: "150px" }} />
+                <label className="font-headline font-black text-xs uppercase mb-2 block tracking-widest">MISSION PARAMETERS</label>
+                <textarea 
+                  name="description" 
+                  placeholder="DESCRIBE THE OPERATION IN DETAIL..." 
+                  className="input-neo w-full h-48 uppercase font-medium"
+                  value={formData.description} 
+                  onChange={handleChange} 
+                />
               </div>
             </div>
           )}
 
           {/* STEP 2: LOCATION & IMAGE */}
           {step === 2 && (
-            <div className="fade-in">
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>PICK LOCATION ON MAP</label>
-                <div style={{ border: "var(--border-thick)", borderRadius: "var(--radius-soft)", overflow: "hidden", boxShadow: "4px 4px 0px 0px var(--color-text)" }}>
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div>
+                <label className="font-headline font-black text-xs uppercase mb-2 block tracking-widest">COORDINATES</label>
+                <div className="neo-border overflow-hidden shadow-[4px_4px_0px_0px_rgba(48,52,44,1)] mb-4 h-64">
                   <LocationPicker onLocationSelect={handleLocationSelect} />
                 </div>
               </div>
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>FULL ADDRESS</label>
-                <input name="address" placeholder="House/Flat No, Street Name" value={formData.address} onChange={handleChange} />
+              <div>
+                <label className="font-headline font-black text-xs uppercase mb-2 block tracking-widest">STREET ADDRESS</label>
+                <input 
+                  name="address" 
+                  placeholder="BUILDING, STREET, AREA" 
+                  className="input-neo w-full uppercase font-bold tracking-tighter"
+                  value={formData.address} 
+                  onChange={handleChange} 
+                />
               </div>
               <div>
-                <label className="text-small" style={{ display: "block", marginBottom: "0.5rem" }}>ADD A PHOTO (OPTIONAL)</label>
-                <input type="file" accept="image/*" onChange={handleImageChange} style={{ background: "var(--color-bg-light)", border: "2px dashed var(--color-text)", padding: "15px", borderRadius: "10px", width: "100%", cursor: "pointer" }} />
-                {imageFile && <p className="text-small" style={{ color: "var(--color-text)", background: "var(--color-mint)", display: "inline-block", padding: "4px 10px", borderRadius: "10px", border: "2px solid var(--color-text)", marginTop: "10px" }}>✓ {imageFile.name} selected</p>}
+                <label className="font-headline font-black text-xs uppercase mb-2 block tracking-widest">VISUAL INTEL (OPTIONAL)</label>
+                <div className="relative group">
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleImageChange} 
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  />
+                  <div className="neo-border border-dashed border-4 p-8 text-center group-hover:bg-surface-container transition-colors">
+                     <span className="material-symbols-outlined text-4xl mb-2">add_a_photo</span>
+                     <p className="font-headline font-black uppercase text-xs">Upload Mission Photos</p>
+                  </div>
+                </div>
+                {imageFile && (
+                  <div className="mt-4 flex items-center gap-2">
+                    <span className="badge-neo bg-secondary-container">✓ {imageFile.name} READY</span>
+                  </div>
+                )}
               </div>
             </div>
           )}
 
           {/* STEP 3: BUDGET */}
           {step === 3 && (
-            <div className="fade-in" style={{ textAlign: "center" }}>
-              <div style={{ margin: "2rem 0" }}>
-                <p style={{ fontWeight: 700, marginBottom: "1rem" }}>How much are you willing to pay?</p>
-                <div style={{ position: "relative", maxWidth: "200px", margin: "0 auto" }}>
-                  <span style={{ position: "absolute", left: "20px", top: "50%", transform: "translateY(-50%)", fontWeight: 800, fontSize: "1.5rem", color: "var(--color-text)" }}>₹</span>
+            <div className="space-y-8 animate-in fade-in duration-300 py-10">
+              <div className="text-center">
+                <label className="font-headline font-black text-xs uppercase mb-6 block tracking-[0.5em]">SET THE VALUATION</label>
+                <div className="relative inline-block mx-auto">
+                  <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-4xl">₹</span>
                   <input 
                     name="budget" 
                     type="number" 
-                    placeholder="0.00" 
+                    placeholder="0" 
+                    className="input-neo text-center text-6xl font-black w-64 pl-12 bg-primary-container shadow-[8px_8px_0px_0px_rgba(48,52,44,1)] py-8"
                     value={formData.budget} 
                     onChange={handleChange} 
-                    style={{ paddingLeft: "45px", fontSize: "1.5rem", fontWeight: 800, textAlign: "center", background: "var(--color-yellow)", boxShadow: "4px 4px 0px 0px var(--color-text)" }} 
                   />
                 </div>
               </div>
               
-              <div className="card" style={{ background: "var(--color-accent-purple)", textAlign: "left", padding: "1.5rem", marginBottom: "2rem", boxShadow: "4px 4px 0px 0px var(--color-text)" }}>
-                <p className="text-small" style={{ marginBottom: "10px", display: "inline-block", background: "var(--color-white)", padding: "2px 8px", borderRadius: "8px", border: "2px solid var(--color-text)" }}>SUMMARY</p>
-                <p style={{ fontWeight: 900, fontSize: "1.2rem", marginBottom: "5px" }}>{formData.title || "No Title"}</p>
-                <p className="text-small" style={{ opacity: 0.9, fontWeight: 700 }}>📍 {formData.address || "No Address Provided"}</p>
+              <div className="card-neo bg-secondary-container relative overflow-visible mt-12">
+                <div className="absolute -top-3 -left-3 badge-neo bg-surface-container-lowest">INTEL SUMMARY</div>
+                <h3 className="text-2xl uppercase mb-2">{formData.title || "NO TITLE ASSIGNED"}</h3>
+                <p className="font-headline font-black text-[10px] uppercase opacity-70">📍 {formData.address || "NO LOCATION SPECIFIED"}</p>
               </div>
             </div>
           )}
         </div>
 
         {error && (
-          <div style={{ background: "var(--color-peach)", border: "var(--border-thick)", borderRadius: "10px", padding: "10px", marginBottom: "1.5rem", marginTop: "1rem" }}>
-            <p style={{ color: "var(--color-text)", fontWeight: 800, textAlign: "center", margin: 0 }}>{error}</p>
+          <div className="bg-error-container neo-border p-4 shadow-[4px_4px_0px_0px_rgba(48,52,44,1)] my-6 animate-pulse">
+            <p className="font-headline font-black text-xs uppercase text-center m-0">ALARM: {error}</p>
           </div>
         )}
 
-        {/* NAVIGATION BUTTONS */}
-        <div style={{ display: "flex", gap: "15px", marginTop: "2rem" }}>
+        <footer className="flex gap-4 mt-12 border-t-[3px] border-on-surface border-dashed pt-8">
           {step > 1 && (
-            <button className="btn btn-peach" onClick={prevStep} style={{ flex: 1, padding: "1rem" }} disabled={isSubmitting}>
-              ← Back
+            <button 
+              className="btn-neo bg-tertiary-container flex-1 py-4 text-lg" 
+              onClick={prevStep} 
+              disabled={isSubmitting}
+            >
+              ← RE-EVALUATE
             </button>
           )}
           
           {step < 3 ? (
-            <button className="btn btn-primary" onClick={nextStep} style={{ flex: 2, padding: "1rem" }}>
-              Next Step →
+            <button 
+              className="btn-neo-primary flex-[2] py-4 text-xl" 
+              onClick={nextStep}
+            >
+              PROCEED →
             </button>
           ) : (
-            <button className="btn btn-secondary" onClick={handleSubmit} style={{ flex: 2, padding: "1rem" }} disabled={isSubmitting}>
-              {isSubmitting ? "Posting..." : "Confirm & Post 🚀"}
+            <button 
+              className="btn-neo-secondary flex-[2] py-4 text-xl bg-secondary-container" 
+              onClick={handleSubmit} 
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "POSTING..." : "DEPLOY GIG 🚀"}
             </button>
           )}
-        </div>
+        </footer>
       </div>
-    </main>
+    </div>
   );
 }

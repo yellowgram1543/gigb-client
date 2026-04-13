@@ -4,7 +4,6 @@ import { io } from "socket.io-client";
 import api from "../api";
 import useAuthStore from "../store/authStore";
 
-// Determine socket url by stripping /api from the active API URL
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const SOCKET_URL = API_URL.replace(/\/api\/?$/, "");
 
@@ -20,8 +19,8 @@ export default function Chat() {
   const messagesEndRef = useRef(null);
 
   const task = location.state?.task || {
-    title: "Chat",
-    helper: { name: "Helper" }
+    title: "OPERATIVE COMMS",
+    helper: { name: "FIELD AGENT" }
   };
 
   const scrollToBottom = () => {
@@ -29,7 +28,6 @@ export default function Chat() {
   };
 
   useEffect(() => {
-    console.log("DEBUG: Attempting to join room:", id);
     socket.emit("join_room", id);
 
     const fetchHistory = async () => {
@@ -37,13 +35,12 @@ export default function Chat() {
         const response = await api.get(`/messages/${id}`);
         setMessages(response.data);
       } catch (err) {
-        console.error("DEBUG ERROR: Fetching history failed:", err);
+        console.error("Fetch history failed:", err);
       }
     };
     fetchHistory();
 
     socket.on("receive_message", (data) => {
-      console.log("DEBUG: New message received from socket:", data);
       setMessages((prev) => [...prev, data]);
     });
 
@@ -63,108 +60,91 @@ export default function Chat() {
     const messageData = {
       taskId: id,
       sender: user?.id || "anonymous",
-      senderName: user?.user_metadata?.full_name || "User",
+      senderName: user?.user_metadata?.full_name || "CURATOR",
       text: inputText
     };
 
-    console.log("DEBUG: Sending message data:", messageData);
     socket.emit("send_message", messageData);
     setInputText("");
   };
 
   return (
-    <main style={{ 
-      display: "flex", 
-      flexDirection: "column", 
-      height: "100vh", 
-      maxWidth: "600px", 
-      margin: "0 auto",
-      background: "white"
-    }}>
-      <header style={{ 
-        padding: "15px 20px", 
-        background: "white", 
-        borderBottom: "var(--border-thick)",
-        display: "flex",
-        alignItems: "center",
-        gap: "15px",
-        zIndex: 10
-      }}>
-        <button 
-          onClick={() => navigate(-1)} 
-          style={{ background: "none", border: "none", fontWeight: 700, cursor: "pointer", fontSize: "1.2rem" }}
-        >
-          ←
-        </button>
-        <div>
-          <h2 style={{ marginBottom: 0, fontSize: "1.2rem" }}>{task.helper?.name || "Task Chat"}</h2>
-          <p className="text-small" style={{ opacity: 0.6 }}>{task.title}</p>
+    <div className="flex flex-col h-[calc(100vh-120px)] max-w-4xl mx-auto neo-border bg-surface-container shadow-[12px_12px_0px_0px_rgba(48,52,44,1)] overflow-hidden">
+      {/* HEADER */}
+      <header className="p-6 bg-surface-container-lowest border-b-[3px] border-on-surface flex items-center justify-between z-10">
+        <div className="flex items-center gap-6">
+          <button 
+            onClick={() => navigate(-1)} 
+            className="w-10 h-10 neo-border bg-tertiary-container flex items-center justify-center neo-interactive"
+          >
+            <span className="material-symbols-outlined font-black">arrow_back</span>
+          </button>
+          <div>
+            <h2 className="text-2xl uppercase m-0 leading-none mb-1 italic">{task.helper?.name || "SECURE CHANNEL"}</h2>
+            <div className="flex items-center gap-2">
+               <span className="w-2 h-2 bg-secondary rounded-full animate-pulse"></span>
+               <p className="font-headline font-black text-[10px] uppercase tracking-widest opacity-50">{task.title}</p>
+            </div>
+          </div>
+        </div>
+        <div className="badge-neo bg-primary-container px-4 py-1 text-xs hidden sm:block">
+           ENCRYPTED COMMS
         </div>
       </header>
 
-      <section style={{ 
-        flex: 1, 
-        overflowY: "auto", 
-        padding: "20px", 
-        display: "flex", 
-        flexDirection: "column", 
-        gap: "15px",
-        background: "#f9f9f9"
-      }}>
+      {/* MESSAGES AREA */}
+      <section className="flex-1 overflow-y-auto p-8 flex flex-col gap-6 custom-scrollbar bg-surface">
         {messages.map((msg, index) => {
           const isMe = msg.sender === user?.id;
           return (
             <div 
               key={msg._id || index} 
-              style={{ 
-                maxWidth: "80%",
-                alignSelf: isMe ? "flex-end" : "flex-start",
-                background: isMe ? "var(--color-lavender)" : "white",
-                padding: "12px 18px",
-                borderRadius: "var(--radius-soft)",
-                border: "var(--border-thick)",
-                boxShadow: "var(--shadow-soft)",
-                position: "relative"
-              }}
+              className={`max-w-[85%] sm:max-w-[70%] flex flex-col ${isMe ? "self-end items-end" : "self-start items-start"}`}
             >
-              {!isMe && <p style={{ fontSize: "0.7rem", fontWeight: 800, marginBottom: "4px", color: "var(--color-primary)" }}>{msg.senderName}</p>}
-              <p style={{ fontWeight: 600, fontSize: "1rem" }}>{msg.text}</p>
-              <p style={{ 
-                fontSize: "0.7rem", 
-                fontWeight: 700, 
-                opacity: 0.5, 
-                textAlign: "right",
-                marginTop: "5px"
-              }}>
-                {msg.time}
-              </p>
+              {!isMe && (
+                <span className="font-headline font-black text-[9px] uppercase tracking-widest mb-1 ml-2 opacity-60">
+                  {msg.senderName}
+                </span>
+              )}
+              <div 
+                className={`card-neo py-3 px-5 relative ${
+                  isMe ? "bg-primary-container shadow-[-4px_4px_0px_0px_rgba(48,52,44,1)]" : "bg-surface-container-lowest shadow-[4px_4px_0px_0px_rgba(48,52,44,1)]"
+                }`}
+              >
+                <p className="font-body font-bold text-sm sm:text-base leading-tight">
+                  {msg.text}
+                </p>
+                <p className="font-headline font-black text-[8px] opacity-40 text-right mt-2 uppercase">
+                  {msg.time || "00:00"}
+                </p>
+              </div>
             </div>
           );
         })}
         <div ref={messagesEndRef} />
       </section>
 
-      <footer style={{ padding: "20px", background: "white", borderTop: "var(--border-thick)" }}>
+      {/* INPUT AREA */}
+      <footer className="p-6 bg-surface-container-lowest border-t-[3px] border-on-surface">
         <form 
           onSubmit={handleSendMessage}
-          style={{ display: "flex", gap: "10px" }}
+          className="flex gap-4"
         >
           <input 
             type="text" 
-            placeholder="Type a message..."
+            placeholder="TRANSMIT MESSAGE..."
+            className="input-neo flex-1 py-4 px-6 text-sm font-bold uppercase tracking-tight"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            style={{ borderRadius: "var(--radius-pill)", flex: 1, padding: "12px 20px", border: "var(--border-thick)" }}
           />
           <button 
             type="submit" 
-            className="btn btn-primary"
-            style={{ padding: "0 1.5rem" }}
+            className="btn-neo-primary px-8 shadow-[4px_4px_0px_0px_rgba(48,52,44,1)] active:shadow-none"
           >
-            Send
+            <span className="material-symbols-outlined font-black">send</span>
           </button>
         </form>
       </footer>
-    </main>
+    </div>
   );
 }

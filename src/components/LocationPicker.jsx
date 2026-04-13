@@ -31,15 +31,17 @@ export default function LocationPicker({ onLocationSelect }) {
   }
 
   return (
-    <div style={{ height: "250px", width: "100%", borderRadius: "var(--radius-md)", overflow: "hidden", border: "var(--border-thick)", marginBottom: "1.5rem" }}>
-      <MapContainer center={position} zoom={13} style={{ height: "100%", width: "100%" }}>
+    <div className="h-full w-full relative">
+      <MapContainer center={position} zoom={13} className="h-full w-full grayscale contrast-125">
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         />
         <LocationMarker />
       </MapContainer>
-      <p className="text-small" style={{ marginTop: "5px", textAlign: "center", fontWeight: 700 }}>Click on the map to set task location</p>
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[400] badge-neo bg-surface-container-lowest py-2 px-4 shadow-[4px_4px_0px_0px_rgba(48,52,44,1)] whitespace-nowrap">
+        CLICK GRID TO SET POSITION
+      </div>
     </div>
   );
 }

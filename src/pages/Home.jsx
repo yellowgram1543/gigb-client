@@ -5,7 +5,7 @@ import useAuthStore from "../store/authStore";
 
 export default function Home() {
   const navigate = useNavigate();
-  const { logout } = useAuthStore();
+  const { user } = useAuthStore();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,109 +23,103 @@ export default function Home() {
     fetchTasks();
   }, []);
 
-  const handleLogout = async () => {
-    await logout();
-    navigate("/auth");
-  };
-
   const activeCount = tasks.filter(t => t.status !== "COMPLETED" && t.status !== "PAID").length;
   
-  // Filter for only OPEN and ASSIGNED tasks for the gallery
   const recentTasks = tasks
     .filter(t => t.status === "OPEN" || t.status === "ASSIGNED")
     .slice(0, 6);
 
   return (
-    <main style={{ padding: "0 20px 40px", maxWidth: "1200px", margin: "0 auto" }}>
-      <header style={{ marginBottom: "2.5rem", background: "var(--color-white)", padding: "2rem", borderRadius: "16px", border: "var(--border-thick)", boxShadow: "var(--shadow-soft)", marginTop: "20px" }}>
-        <h1 style={{ marginBottom: "0.5rem", color: "var(--color-text)" }}>Welcome Back 👋</h1>
-        <p style={{ fontWeight: 700, color: "var(--color-text)", margin: 0 }}>
-          {loading ? "Loading..." : `You have ${activeCount} active tasks to manage today.`}
-        </p>
+    <div className="max-w-7xl mx-auto space-y-12">
+      {/* Hero / Welcome */}
+      <header className="card-neo bg-primary-container relative overflow-visible">
+         <div className="absolute -top-4 -right-4 badge-neo bg-tertiary-container px-4 py-2 text-sm">
+            POSTER DASHBOARD
+         </div>
+         <h1 className="text-5xl md:text-7xl mb-4 uppercase">Welcome, {user?.name || 'Curator'} 👋</h1>
+         <p className="font-headline font-bold text-xl uppercase tracking-tight opacity-80">
+           {loading ? "Analyzing Marketplace..." : `You are currently managing ${activeCount} active engagements.`}
+         </p>
       </header>
 
-      <div style={{ 
-        display: "grid", 
-        gridTemplateColumns: "280px 1fr", 
-        gap: "40px",
-        alignItems: "start"
-      }}>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         
-        {/* LEFT PANE: STATS */}
-        <aside style={{ display: "flex", flexDirection: "column", gap: "20px", position: "sticky", top: "100px" }}>
-          <div className="card" style={{ background: "var(--color-peach)", textAlign: "center", padding: "2rem" }}>
-            <h2 style={{ fontSize: "3rem", marginBottom: "0", color: "var(--color-text)" }}>{tasks.length}</h2>
-            <p className="text-small" style={{ letterSpacing: "1px" }}>TOTAL TASKS</p>
+        {/* STATS PANE */}
+        <aside className="lg:col-span-4 space-y-8 sticky top-8">
+          <div className="card-neo bg-secondary-container text-center py-10">
+            <h2 className="text-8xl mb-2">{tasks.length}</h2>
+            <p className="font-headline font-black uppercase tracking-widest text-sm">Total Engagements</p>
           </div>
-          <div className="card" style={{ background: "var(--color-accent-purple)", textAlign: "center", padding: "2rem" }}>
-            <h2 style={{ fontSize: "3rem", marginBottom: "0", color: "var(--color-text)" }}>{activeCount}</h2>
-            <p className="text-small" style={{ letterSpacing: "1px", color: "var(--color-text)" }}>ACTIVE NOW</p>
+          
+          <div className="card-neo bg-tertiary-container text-center py-10">
+            <h2 className="text-8xl mb-2">{activeCount}</h2>
+            <p className="font-headline font-black uppercase tracking-widest text-sm">Active Now</p>
           </div>
-          <button className="btn btn-primary" onClick={() => navigate("/post-task")} style={{ width: "100%", padding: "1.2rem", fontSize: "1.1rem" }}>
-            + Create New Task
+
+          <button 
+            className="btn-neo-primary w-full py-6 text-2xl shadow-[8px_8px_0px_0px_rgba(48,52,44,1)] active:shadow-none"
+            onClick={() => navigate("/post-task")}
+          >
+            + POST NEW GIG
           </button>
         </aside>
 
-        {/* RIGHT CONTENT: GALLERY */}
-        <section>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", background: "var(--color-white)", padding: "1rem", borderRadius: "var(--radius-pill)", border: "var(--border-thick)", boxShadow: "var(--shadow-soft)" }}>
-            <h2 style={{ margin: 0, paddingLeft: "1rem", color: "var(--color-text)", fontSize: "1.4rem" }}>Recent Open Tasks</h2>
-            <button className="btn btn-secondary" style={{ padding: "0.5rem 1.2rem", fontSize: "0.85rem", borderRadius: "10px" }} onClick={() => navigate("/tasks")}>View All</button>
+        {/* RECENT TASKS */}
+        <section className="lg:col-span-8 space-y-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface-container neo-border p-6 shadow-[4px_4px_0px_0px_rgba(48,52,44,1)]">
+            <h2 className="text-3xl uppercase m-0">Recent Open Market</h2>
+            <button 
+              className="btn-neo bg-surface-container-lowest text-sm px-4 py-2"
+              onClick={() => navigate("/tasks")}
+            >
+              VIEW ALL GIGS
+            </button>
           </div>
 
           {loading ? (
-            <div className="loader" style={{ margin: "40px auto", display: "block" }}></div>
+            <div className="flex justify-center py-20">
+               <div className="loader border-[6px] border-on-surface border-b-transparent rounded-full w-16 h-16 animate-spin"></div>
+            </div>
           ) : recentTasks.length === 0 ? (
-            <div className="card" style={{ textAlign: "center", padding: "5rem", background: "var(--color-yellow)", borderStyle: "dashed", opacity: 0.9 }}>
-              <p style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: "1rem" }}>No active tasks. Start by posting one.</p>
-              <button className="btn btn-primary" onClick={() => navigate("/post-task")}>Create My First Task</button>
+            <div className="card-neo text-center py-20 bg-surface-container border-dashed border-4">
+              <p className="text-2xl font-headline font-black uppercase mb-8 opacity-60">The market is quiet. Time to innovate.</p>
+              <button className="btn-neo-primary" onClick={() => navigate("/post-task")}>LAUNCH FIRST GIG</button>
             </div>
           ) : (
-            <div style={{ 
-              display: "grid", 
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", 
-              gap: "20px" 
-            }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {recentTasks.map(task => (
                 <div 
                   key={task._id} 
-                  className="card" 
-                  style={{ 
-                    display: "flex", 
-                    flexDirection: "column", 
-                    justifyContent: "space-between", 
-                    cursor: "pointer",
-                    minHeight: "220px",
-                    background: "var(--color-cream)"
-                  }}
+                  className="card-neo flex flex-col justify-between cursor-pointer min-h-[300px] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_0px_rgba(48,52,44,1)] neo-interactive"
                   onClick={() => navigate(`/task/${task._id}`)}
                 >
                   <div>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "1rem" }}>
-                      <span className={`badge ${task.status === "OPEN" ? "badge-mint" : "badge-yellow"}`}>
+                    <div className="flex justify-between items-start mb-6">
+                      <span className={`badge-neo ${task.status === "OPEN" ? "bg-secondary-container" : "bg-primary-container"}`}>
                         {task.status}
                       </span>
-                      <div style={{ fontWeight: 800, color: "var(--color-text)", background: "var(--color-white)", padding: "4px 10px", borderRadius: "20px", border: "var(--border-thick)", boxShadow: "2px 2px 0px 0px var(--color-text)", fontSize: "0.9rem" }}>₹{task.budget}</div>
+                      <div className="neo-border bg-surface-container-lowest px-4 py-1 font-headline font-black text-xl shadow-[4px_4px_0px_0px_rgba(48,52,44,1)]">
+                        ₹{task.budget}
+                      </div>
                     </div>
-                    <h3 style={{ marginBottom: "0.5rem", fontSize: "1.2rem", lineHeight: "1.2", color: "var(--color-text)" }}>{task.title}</h3>
-                    <p className="text-small" style={{ opacity: 0.8, color: "var(--color-text)", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                    <h3 className="text-3xl mb-4 leading-none uppercase">{task.title}</h3>
+                    <p className="font-body text-on-surface opacity-80 line-clamp-3">
                       {task.description}
                     </p>
                   </div>
                   
-                  <div>
-                    <div className="dashed-divider"></div>
-                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                      <p className="text-small" style={{ fontWeight: 800, color: "var(--color-text)", background: "var(--color-peach)", padding: "4px 12px", borderRadius: "10px", border: "var(--border-thick)" }}>DETAILS →</p>
-                    </div>
+                  <div className="mt-8 pt-6 border-t-[3px] border-on-surface border-dashed flex justify-between items-center">
+                    <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Ref: {task._id.slice(-6)}</span>
+                    <p className="font-headline font-black uppercase tracking-tighter text-lg bg-tertiary-container px-3 py-1 neo-border shadow-[2px_2px_0px_0px_rgba(48,52,44,1)]">
+                      DETAILS →
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
           )}
         </section>
-
       </div>
-    </main>
+    </div>
   );
 }
