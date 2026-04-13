@@ -131,4 +131,31 @@ router.patch('/:id/confirm-helper', protect, async (req, res) => {
   }
 });
 
+// 8. POSTER REFUNDS ESCROW
+router.patch('/:id/refund', protect, async (req, res) => {
+  try {
+    if (req.user.role !== 'user') {
+      return res.status(403).json({ message: 'Only posters can initiate a refund' });
+    }
+
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+
+    if (task.escrow_status !== 'locked') {
+      return res.status(400).json({ message: 'Refund only allowed if escrow is locked' });
+    }
+
+    task.escrow_status = 'refunded';
+    task.status = 'CANCELLED';
+
+    const updatedTask = await task.save();
+    
+    console.log(`Escrow refunded: ₹${updatedTask.escrow_amount} to poster for task #${updatedTask._id}`);
+    
+    res.status(200).json(updatedTask);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export default router;
