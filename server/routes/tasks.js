@@ -52,4 +52,29 @@ router.patch('/:id', async (req, res) => {
   }
 });
 
+// 5. ACCEPT A GIG (Assign helper and lock escrow)
+router.patch('/:id/accept', async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+
+    task.status = 'ASSIGNED';
+    if (req.body.helper) {
+      task.helper = req.body.helper;
+    }
+    
+    // Escrow logic
+    task.escrow_amount = task.budget;
+    task.escrow_status = 'locked';
+
+    const updatedTask = await task.save();
+    
+    console.log(`Escrow locked: ₹${updatedTask.escrow_amount} for task #${updatedTask._id}`);
+    
+    res.status(200).json(updatedTask);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export default router;
