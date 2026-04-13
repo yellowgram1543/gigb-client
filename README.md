@@ -9,7 +9,7 @@
 - 🔐 **Secure Authentication**: Production-ready auth via **Supabase** (Email verification, password resets).
 - 📍 **Location-Aware**: Integrated **Leaflet Maps** for picking task locations and browsing nearby gigs.
 - 💬 **Real-time Chat**: Dedicated chat rooms for every task powered by **Socket.io**.
-- 📋 **Task Lifecycle**: Post tasks, browse listings, and track progress from "Open" to "Completed".
+- 📋 **Task Lifecycle**: Post tasks, browse listings, and track progress from "OPEN" to "COMPLETED".
 - 💳 **Payments Flow**: Integrated prototype for handling gig transactions.
 - 🎨 **Modern UI**: Smooth animations with **Framer Motion** and a responsive, card-based design.
 

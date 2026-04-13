@@ -126,8 +126,8 @@ export default function TaskList() {
       ) : (
         <div className="flex gap-10 overflow-x-auto pb-10 items-start scrollbar-hide">
           <BoardColumn title="Pending" taskList={openTasks} colorClass="bg-tertiary-container" icon="pending_actions"/>
-          <BoardColumn title="In-Progress" taskList={ongoingTasks} colorClass="bg-primary-container" icon="engineering" />
-          <BoardColumn title="Completed" taskList={completedTasks} colorClass="bg-secondary-container" icon="check_circle" />
+          <BoardColumn title="ASSIGNED" taskList={ongoingTasks} colorClass="bg-primary-container" icon="engineering" />
+          <BoardColumn title="COMPLETED" taskList={completedTasks} colorClass="bg-secondary-container" icon="check_circle" />
         </div>
       )}
     </div>
