@@ -36,6 +36,23 @@ const taskSchema = new mongoose.Schema({
   reviewText: {
     type: String,
     trim: true
+  },
+  escrow_status: {
+    type: String,
+    enum: ["none", "locked", "released", "refunded"],
+    default: "none"
+  },
+  escrow_amount: {
+    type: Number,
+    default: 0
+  },
+  payment_confirmed_poster: {
+    type: Boolean,
+    default: false
+  },
+  payment_confirmed_helper: {
+    type: Boolean,
+    default: false
   }
 }, { timestamps: true });
 
