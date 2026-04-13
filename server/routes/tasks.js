@@ -55,8 +55,17 @@ router.post('/', protect, async (req, res) => {
 });
 
 // 4. UPDATE A TASK (e.g., change status to ASSIGNED or COMPLETED)
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', protect, async (req, res) => {
   try {
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+
+    // Verify ownership
+    if (task.posterId !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+    console.log("Ownership check passed");
+
     console.log("DEBUG: Incoming PATCH body:", req.body);
     // Whitelist of fields allowed to be updated via this route
     const allowedFields = ["title", "description", "budget", "category", "location", "scheduledAt", "address", "imageUrl"];
@@ -76,8 +85,6 @@ router.patch('/:id', async (req, res) => {
       filteredBody, 
       { new: true } // Returns the updated document
     );
-    
-    if (!updatedTask) return res.status(404).json({ message: 'Task not found' });
     
     res.status(200).json(updatedTask);
   } catch (error) {
