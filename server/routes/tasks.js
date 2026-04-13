@@ -57,11 +57,28 @@ router.post('/', protect, async (req, res) => {
 // 4. UPDATE A TASK (e.g., change status to ASSIGNED or COMPLETED)
 router.patch('/:id', async (req, res) => {
   try {
+    console.log("DEBUG: Incoming PATCH body:", req.body);
+    // Whitelist of fields allowed to be updated via this route
+    const allowedFields = ["title", "description", "budget", "category", "location", "scheduledAt", "address", "imageUrl"];
+    
+    // Filter req.body to only include allowed fields
+    const filteredBody = {};
+    Object.keys(req.body).forEach(key => {
+      if (allowedFields.includes(key)) {
+        filteredBody[key] = req.body[key];
+      }
+    });
+    
+    console.log("DEBUG: Filtered body for update:", filteredBody);
+
     const updatedTask = await Task.findByIdAndUpdate(
       req.params.id, 
-      req.body, 
+      filteredBody, 
       { new: true } // Returns the updated document
     );
+    
+    if (!updatedTask) return res.status(404).json({ message: 'Task not found' });
+    
     res.status(200).json(updatedTask);
   } catch (error) {
     res.status(500).json({ message: error.message });
