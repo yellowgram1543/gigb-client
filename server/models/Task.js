@@ -31,6 +31,7 @@ const taskSchema = new mongoose.Schema({
     min: [1, "Budget must be at least ₹1"]
   },
   imageUrl: { type: String, default: null },
+  completionImageUrl: { type: String, default: null },
   posterId: { type: String, required: true },
   helperId: { type: String, default: null },
 

@@ -81,18 +81,36 @@ export default function TaskList() {
               </p>
 
               {task.status === "ASSIGNED" && (
-                <div className="mb-4">
+                <div className="mb-4 space-y-3">
+                  {task.completionImageUrl && (
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1">
+                        <span className="material-symbols-outlined text-secondary text-[12px]">photo_camera</span>
+                        <label className="font-headline font-black text-[8px] uppercase tracking-widest text-secondary">📸 Proof Submitted</label>
+                      </div>
+                      <div 
+                        className="neo-border shadow-[3px_3px_0px_0px_rgba(28,107,80,0.2)] overflow-hidden bg-surface-container-low max-w-[100px] cursor-zoom-in"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(task.completionImageUrl, '_blank');
+                        }}
+                      >
+                        <img src={task.completionImageUrl} alt="Completion Proof" className="w-full h-auto grayscale hover:grayscale-0 transition-all" />
+                      </div>
+                    </div>
+                  )}
+
                   {task.payment_confirmed_poster ? (
-                    <div className="bg-surface-container neo-border p-2 text-center">
-                       <p className="font-headline font-black text-[8px] uppercase m-0 animate-pulse">Waiting for Helper confirmation...</p>
+                    <div className="bg-secondary-container neo-border p-2 text-center shadow-[3px_3px_0px_0px_rgba(48,52,44,1)]">
+                       <p className="font-headline font-black text-[9px] uppercase m-0">Payment Released ✅</p>
                     </div>
                   ) : (
                     <button 
-                      className="btn-neo-secondary w-full bg-secondary-container py-2 text-[10px]"
+                      className={`btn-neo w-full py-2 text-[10px] font-black shadow-[4px_4px_0px_0px_rgba(48,52,44,1)] ${task.completionImageUrl ? 'bg-secondary-container' : 'bg-primary-container'}`}
                       onClick={(e) => handleConfirmPoster(e, task._id)}
                       disabled={processingId === task._id}
                     >
-                      {processingId === task._id ? "TRANSMITTING..." : "CONFIRM COMPLETION →"}
+                      {processingId === task._id ? "TRANSMITTING..." : task.completionImageUrl ? "RELEASE PAYMENT →" : "CONFIRM COMPLETION →"}
                     </button>
                   )}
                 </div>
