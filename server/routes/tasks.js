@@ -1,6 +1,7 @@
 import express from 'express';
 import Task from '../models/Task.js';
 import protect from '../middleware/auth.js';
+import { auditLog } from '../utils/logger.js';
 
 const router = express.Router();
 
@@ -8,7 +9,7 @@ const router = express.Router();
 const releaseEscrow = (task) => {
   task.escrow_status = "released";
   task.status = "COMPLETED";
-  console.log(`Escrow released: ₹${task.escrow_amount} to helper for task #${task._id}`);
+  auditLog(`Escrow released: ₹${task.escrow_amount} to helper for task #${task._id}`);
 };
 
 // 1. GET ALL TASKS
@@ -48,6 +49,7 @@ router.post('/', protect, async (req, res) => {
 
   try {
     await newTask.save();
+    auditLog(`Task created: #${newTask._id} by user ${req.user._id}`);
     res.status(201).json(newTask);
   } catch (error) {
     res.status(409).json({ message: error.message });
@@ -64,9 +66,7 @@ router.patch('/:id', protect, async (req, res) => {
     if (task.posterId !== req.user._id.toString()) {
       return res.status(403).json({ error: "Not authorized" });
     }
-    console.log("Ownership check passed");
-
-    console.log("DEBUG: Incoming PATCH body:", req.body);
+    
     // Whitelist of fields allowed to be updated via this route
     const allowedFields = ["title", "description", "budget", "category", "location", "scheduledAt", "address", "imageUrl"];
     
@@ -78,14 +78,13 @@ router.patch('/:id', protect, async (req, res) => {
       }
     });
     
-    console.log("DEBUG: Filtered body for update:", filteredBody);
-
     const updatedTask = await Task.findByIdAndUpdate(
       req.params.id, 
       filteredBody, 
       { new: true } // Returns the updated document
     );
     
+    auditLog(`Task updated: #${updatedTask._id} by user ${req.user._id}`);
     res.status(200).json(updatedTask);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -109,7 +108,7 @@ router.patch('/:id/accept', async (req, res) => {
 
     const updatedTask = await task.save();
     
-    console.log(`Escrow locked: ₹${updatedTask.escrow_amount} for task #${updatedTask._id}`);
+    auditLog(`Escrow locked: ₹${updatedTask.escrow_amount} for task #${updatedTask._id}`);
     
     res.status(200).json(updatedTask);
   } catch (error) {
@@ -134,6 +133,7 @@ router.patch('/:id/confirm-poster', protect, async (req, res) => {
     }
 
     const updatedTask = await task.save();
+    auditLog(`Poster confirmed work for task #${updatedTask._id}`);
     res.status(200).json(updatedTask);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -157,6 +157,7 @@ router.patch('/:id/confirm-helper', protect, async (req, res) => {
     }
 
     const updatedTask = await task.save();
+    auditLog(`Helper confirmed completion for task #${updatedTask._id}`);
     res.status(200).json(updatedTask);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -182,7 +183,7 @@ router.patch('/:id/refund', protect, async (req, res) => {
 
     const updatedTask = await task.save();
     
-    console.log(`Escrow refunded: ₹${updatedTask.escrow_amount} to poster for task #${updatedTask._id}`);
+    auditLog(`Escrow refunded: ₹${updatedTask.escrow_amount} to poster for task #${updatedTask._id}`);
     
     res.status(200).json(updatedTask);
   } catch (error) {

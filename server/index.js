@@ -9,6 +9,7 @@ import authRoutes from './routes/auth.js';
 import Message from './models/Message.js';
 import Task from './models/Task.js';
 import protect from './middleware/auth.js';
+import { auditLog } from './utils/logger.js';
 
 dotenv.config();
 
