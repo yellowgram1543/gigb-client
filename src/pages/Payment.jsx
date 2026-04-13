@@ -55,19 +55,19 @@ export default function Payment() {
 
   if (isReviewed) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-surface">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-surface">
         <motion.div 
-          className="card-neo bg-secondary-container max-w-md w-full text-center space-y-6"
+          className="card-neo bg-secondary-container max-w-xs w-full text-center space-y-4"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
         >
-          <h2 className="text-8xl mb-4 italic">✨</h2>
-          <h2 className="text-4xl uppercase leading-none">Operation Archived</h2>
-          <p className="font-headline font-black text-sm uppercase tracking-tight opacity-80">
-            Your evaluation of <strong>{task.helper?.name}</strong> has been logged. The market appreciates your intel.
+          <h2 className="text-6xl mb-2 italic">✨</h2>
+          <h2 className="text-2xl uppercase leading-none">Archived</h2>
+          <p className="font-headline font-black text-[10px] uppercase tracking-tight opacity-80">
+            Evaluation logged. Base updated.
           </p>
           <button 
-            className="btn-neo bg-surface-container-lowest w-full py-4 text-xl" 
+            className="btn-neo bg-surface-container-lowest w-full py-3 text-sm" 
             onClick={() => navigate("/")}
           >
             RETURN TO BASE →
@@ -79,27 +79,27 @@ export default function Payment() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-surface">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-surface">
         <motion.div 
-          className="card-neo bg-surface-container-lowest max-w-lg w-full text-center p-10"
-          initial={{ y: 50, opacity: 0 }}
+          className="card-neo bg-surface-container-lowest max-w-sm w-full text-center p-6"
+          initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
         >
-          <h2 className="text-secondary text-7xl mb-4 italic leading-none">✓</h2>
-          <h1 className="text-4xl uppercase mb-4">Transfer Complete</h1>
-          <p className="font-headline font-black text-xs uppercase tracking-widest opacity-60 mb-10">
-            Rate the performance of <strong>{task.helper?.name}</strong>
+          <h2 className="text-secondary text-5xl mb-2 italic leading-none">✓</h2>
+          <h1 className="text-2xl uppercase mb-2">Transfer Complete</h1>
+          <p className="font-headline font-black text-[9px] uppercase tracking-widest opacity-60 mb-6">
+            Rate performance: <strong>{task.helper?.name}</strong>
           </p>
 
-          <form onSubmit={handleReviewSubmit} className="space-y-8">
-            <div className="flex justify-center gap-4">
+          <form onSubmit={handleReviewSubmit} className="space-y-6">
+            <div className="flex justify-center gap-3">
               {[1, 2, 3, 4, 5].map((star) => (
                 <motion.button
                   key={star}
                   type="button"
                   onClick={() => setRating(star)}
-                  className={`text-5xl transition-colors ${star <= rating ? "text-primary opacity-100" : "text-surface-variant opacity-30"}`}
-                  whileHover={{ scale: 1.2, rotate: 10 }}
+                  className={`text-3xl transition-colors ${star <= rating ? "text-primary" : "text-surface-variant opacity-30"}`}
+                  whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
                 >
                   ★
@@ -108,18 +108,18 @@ export default function Payment() {
             </div>
 
             <textarea
-              placeholder="OPTIONAL DEBRIEFING NOTES..."
-              className="input-neo w-full h-32 uppercase font-medium text-sm"
+              placeholder="DEBRIEFING NOTES..."
+              className="input-neo w-full h-24 uppercase font-medium text-[10px]"
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
             />
 
             <button 
               type="submit"
-              className="btn-neo-primary w-full py-5 text-2xl shadow-[8px_8px_0px_0px_rgba(48,52,44,1)] active:shadow-none"
+              className="btn-neo-primary w-full py-3 text-lg shadow-[4px_4px_0px_0px_rgba(48,52,44,1)] active:shadow-none"
               disabled={isSubmittingReview || rating === 0}
             >
-              {isSubmittingReview ? "LOGGING..." : "SUBMIT EVALUATION →"}
+              {isSubmittingReview ? "LOGGING..." : "SUBMIT →"}
             </button>
           </form>
         </motion.div>
@@ -128,63 +128,61 @@ export default function Payment() {
   }
 
   return (
-    <div className="max-w-xl mx-auto py-12 space-y-10">
+    <div className="max-w-md mx-auto py-8 space-y-6">
       <header className="flex justify-between items-center">
         <button 
           onClick={() => navigate(-1)} 
-          className="font-headline font-black uppercase text-xs opacity-60 flex items-center gap-2"
+          className="font-headline font-black uppercase text-[9px] opacity-60 flex items-center gap-2"
         >
-          <span className="material-symbols-outlined text-sm">arrow_back</span> BACK
+          <span className="material-symbols-outlined text-xs">arrow_back</span> BACK
         </button>
-        <span className="badge-neo bg-tertiary-container px-4 py-1 text-[10px]">PAYMENT GATEWAY</span>
+        <span className="badge-neo bg-tertiary-container px-3 py-0.5 text-[8px]">PAYMENT GATEWAY</span>
       </header>
 
-      <h1 className="text-6xl uppercase leading-none italic tracking-tighter">Settle Accounts</h1>
-      <p className="font-headline font-black text-xs uppercase tracking-widest opacity-60">Authorize the release of funds for this operation.</p>
+      <h1 className="text-4xl uppercase leading-none italic tracking-tighter">Settle Accounts</h1>
+      <p className="font-headline font-black text-[10px] uppercase tracking-widest opacity-60">Authorize release of funds.</p>
 
       {/* Payment Summary */}
-      <div className="card-neo bg-surface-container relative overflow-visible border-dashed border-4">
-        <div className="absolute -top-3 -left-3 badge-neo bg-surface-container-lowest">INVOICE SUMMARY</div>
-        <div className="space-y-4">
-          <div className="flex justify-between items-end border-b-[2px] border-on-surface border-dashed pb-2">
-            <span className="font-headline font-black text-[10px] uppercase opacity-50">Task Engagement</span>
-            <span className="font-headline font-black text-sm uppercase">{task.title}</span>
+      <div className="card-neo bg-surface-container relative overflow-visible border-dashed border-[3px]">
+        <div className="absolute -top-2.5 -left-2.5 badge-neo bg-surface-container-lowest text-[8px]">INVOICE</div>
+        <div className="space-y-3">
+          <div className="flex justify-between items-end border-b border-on-surface border-dashed pb-1">
+            <span className="font-headline font-black text-[8px] uppercase opacity-50">Task</span>
+            <span className="font-headline font-black text-[10px] uppercase">{task.title}</span>
           </div>
-          <div className="flex justify-between items-end border-b-[2px] border-on-surface border-dashed pb-2">
-            <span className="font-headline font-black text-[10px] uppercase opacity-50">Field Operative</span>
-            <span className="font-headline font-black text-sm uppercase">{task.helper?.name || "ASSIGNED HELPER"}</span>
+          <div className="flex justify-between items-end border-b border-on-surface border-dashed pb-1">
+            <span className="font-headline font-black text-[8px] uppercase opacity-50">Operative</span>
+            <span className="font-headline font-black text-[10px] uppercase">{task.helper?.name || "HELPER"}</span>
           </div>
-          <div className="flex justify-between items-center pt-4">
-            <span className="text-2xl font-black uppercase italic tracking-tighter">Total Release</span>
-            <span className="text-5xl font-black text-primary">₹{task.budget}</span>
+          <div className="flex justify-between items-center pt-2">
+            <span className="text-xl font-black uppercase italic tracking-tighter">Total Release</span>
+            <span className="text-3xl font-black text-primary">₹{task.budget}</span>
           </div>
         </div>
       </div>
 
-      {/* Payment Methods */}
-      <div className="space-y-4">
-        <h2 className="text-xl uppercase font-black italic">Select Protocol</h2>
-        <div className="grid grid-cols-1 gap-4">
-          <button className="btn-neo bg-surface-container-lowest justify-start text-xs font-black uppercase tracking-widest px-6 py-4 shadow-[4px_4px_0px_0px_rgba(48,52,44,1)]">
-             <span className="material-symbols-outlined mr-4">credit_card</span> Credit / Debit Card
+      <div className="space-y-3">
+        <h2 className="text-lg uppercase font-black italic">Select Protocol</h2>
+        <div className="grid grid-cols-1 gap-3">
+          <button className="btn-neo bg-surface-container-lowest justify-start text-[9px] font-black uppercase tracking-widest px-4 py-3 shadow-[3px_3px_0px_0px_rgba(48,52,44,1)]">
+             <span className="material-symbols-outlined text-sm mr-3">credit_card</span> Credit / Debit Card
           </button>
-          <button className="btn-neo bg-surface-container-lowest justify-start text-xs font-black uppercase tracking-widest px-6 py-4 shadow-[4px_4px_0px_0px_rgba(48,52,44,1)]">
-             <span className="material-symbols-outlined mr-4">payments</span> UPI / Digital Wallets
+          <button className="btn-neo bg-surface-container-lowest justify-start text-[9px] font-black uppercase tracking-widest px-4 py-3 shadow-[3px_3px_0px_0px_rgba(48,52,44,1)]">
+             <span className="material-symbols-outlined text-sm mr-3">payments</span> UPI / Digital Wallets
           </button>
         </div>
       </div>
 
-      {/* Pay Button */}
       <button 
-        className="btn-neo-primary w-full py-6 text-3xl shadow-[12px_12px_0px_0px_rgba(48,52,44,1)] active:shadow-none bg-primary-container"
+        className="btn-neo-primary w-full py-4 text-xl shadow-[6px_6px_0px_0px_rgba(48,52,44,1)] active:shadow-none bg-primary-container"
         onClick={handlePay}
         disabled={isProcessing}
       >
         {isProcessing ? "TRANSMITTING..." : `RELEASE ₹${task.budget} →`}
       </button>
 
-      <p className="text-center font-headline font-black text-[9px] uppercase tracking-[0.4em] opacity-40">
-        SECURE PROTOCOL POWERED BY GIGB BLOCKCHAIN
+      <p className="text-center font-headline font-black text-[7px] uppercase tracking-[0.3em] opacity-40">
+        SECURE PROTOCOL POWERED BY GIGB
       </p>
     </div>
   );

@@ -45,17 +45,17 @@ export default function TaskDetail() {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-40">
-        <div className="loader border-[6px] border-on-surface border-b-transparent rounded-full w-16 h-16 animate-spin"></div>
+      <div className="flex justify-center py-20">
+        <div className="loader border-[4px] border-on-surface border-b-transparent rounded-full w-10 h-10 animate-spin"></div>
       </div>
     );
   }
 
   if (!task) {
     return (
-      <div className="max-w-2xl mx-auto py-20 text-center">
-        <h1 className="text-4xl uppercase opacity-40">Gig Not Found</h1>
-        <button className="btn-neo-primary mt-8" onClick={() => navigate("/")}>RETURN TO BASE</button>
+      <div className="max-w-xl mx-auto py-10 text-center">
+        <h1 className="text-2xl uppercase opacity-40">Gig Not Found</h1>
+        <button className="btn-neo-primary mt-4" onClick={() => navigate("/")}>RETURN TO BASE</button>
       </div>
     );
   }
@@ -68,41 +68,41 @@ export default function TaskDetail() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-12 pb-20">
+    <div className="max-w-2xl mx-auto space-y-8 pb-10">
       <div className="card-neo bg-surface-container-lowest relative overflow-visible">
-        <div className={`absolute -top-4 -right-4 badge-neo ${statusColors[task.status]} px-6 py-2 text-sm shadow-[4px_4px_0px_0px_rgba(48,52,44,1)]`}>
+        <div className={`absolute -top-3 -right-3 badge-neo ${statusColors[task.status]} px-4 py-1 text-[9px] shadow-[2px_2px_0px_0px_rgba(48,52,44,1)]`}>
           {task.status}
         </div>
         
-        <header className="mb-8 pb-8 border-b-[3px] border-on-surface border-dashed">
-          <h1 className="text-5xl md:text-6xl uppercase leading-none mb-4">{task.title}</h1>
-          <div className="flex items-center gap-4">
-             <span className="font-headline font-black text-xs uppercase opacity-50 tracking-widest">Operation ID: {task._id.slice(-8)}</span>
-             <div className="neo-border bg-primary-container px-3 py-0.5 font-headline font-black text-xl shadow-[2px_2px_0px_0px_rgba(48,52,44,1)]">
+        <header className="mb-6 pb-6 border-b-[2px] border-on-surface border-dashed">
+          <h1 className="text-3xl md:text-4xl uppercase leading-none mb-3">{task.title}</h1>
+          <div className="flex items-center gap-3">
+             <span className="font-headline font-black text-[8px] uppercase opacity-50 tracking-widest">ID: {task._id.slice(-8)}</span>
+             <div className="neo-border bg-primary-container px-2 py-0.5 font-headline font-black text-lg shadow-[2px_2px_0px_0px_rgba(48,52,44,1)]">
                 ₹{task.budget}
              </div>
           </div>
         </header>
         
-        <div className="space-y-8">
-          <p className="font-body text-xl leading-relaxed text-on-surface">
+        <div className="space-y-6">
+          <p className="font-body text-base leading-relaxed text-on-surface">
             {task.description}
           </p>
           
           {task.imageUrl && (
-            <div className="neo-border shadow-[8px_8px_0px_0px_rgba(48,52,44,1)] overflow-hidden bg-surface-container">
+            <div className="neo-border shadow-[4px_4px_0px_0px_rgba(48,52,44,1)] overflow-hidden bg-surface-container">
               <img src={task.imageUrl} alt={task.title} className="w-full h-auto grayscale hover:grayscale-0 transition-all duration-500" />
             </div>
           )}
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t-[3px] border-on-surface border-dashed">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t-[2px] border-on-surface border-dashed">
             <div>
-              <label className="font-headline font-black text-[10px] uppercase tracking-[0.3em] opacity-50 mb-2 block">Deployment Zone</label>
-              <p className="font-headline font-black text-lg uppercase leading-tight">{task.address}</p>
+              <label className="font-headline font-black text-[8px] uppercase tracking-[0.2em] opacity-50 mb-1 block">Deployment Zone</label>
+              <p className="font-headline font-black text-sm uppercase leading-tight">{task.address}</p>
             </div>
             <div className="flex flex-col items-end">
-              <label className="font-headline font-black text-[10px] uppercase tracking-[0.3em] opacity-50 mb-2 block">Economic Value</label>
-              <p className="text-4xl font-black">₹{task.budget}</p>
+              <label className="font-headline font-black text-[8px] uppercase tracking-[0.2em] opacity-50 mb-1 block">Economic Value</label>
+              <p className="text-2xl font-black">₹{task.budget}</p>
             </div>
           </div>
         </div>
@@ -110,22 +110,22 @@ export default function TaskDetail() {
 
       {/* APPLICANTS SECTION */}
       {task.status === "OPEN" && (
-        <section className="space-y-6">
-          <h2 className="text-3xl uppercase italic tracking-tighter">Field Operatives (Applicants)</h2>
-          <div className="grid grid-cols-1 gap-6">
+        <section className="space-y-4">
+          <h2 className="text-xl uppercase italic tracking-tighter">Field Operatives</h2>
+          <div className="grid grid-cols-1 gap-4">
             {applicants.map(app => (
-              <div key={app.id} className="card-neo flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface-container-lowest hover:bg-surface-container transition-colors">
-                <div className="flex items-center gap-6">
-                   <div className="w-12 h-12 neo-border bg-primary-container flex items-center justify-center font-black text-xl">
+              <div key={app.id} className="card-neo flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-surface-container-lowest hover:bg-surface-container transition-colors p-3">
+                <div className="flex items-center gap-4">
+                   <div className="w-10 h-10 neo-border bg-primary-container flex items-center justify-center font-black text-lg">
                       {app.name[0]}
                    </div>
                    <div>
-                     <h3 className="text-2xl uppercase m-0 leading-none mb-1">{app.name}</h3>
-                     <p className="font-headline font-black text-[10px] uppercase tracking-widest opacity-60">Rating: {app.rating} / {app.reviews} Reviews</p>
+                     <h3 className="text-lg uppercase m-0 leading-none mb-0.5">{app.name}</h3>
+                     <p className="font-headline font-black text-[8px] uppercase tracking-widest opacity-60">Rating: {app.rating} / {app.reviews} Reviews</p>
                    </div>
                 </div>
                 <button 
-                  className="btn-neo-secondary w-full md:w-auto bg-secondary-container" 
+                  className="btn-neo-secondary w-full md:w-auto bg-secondary-container py-1.5 px-4 text-[10px]" 
                   onClick={() => handleUpdateStatus("ASSIGNED", app)}
                 >
                   ASSIGN MISSION →
@@ -138,22 +138,22 @@ export default function TaskDetail() {
 
       {/* ASSIGNED SECTION */}
       {task.status === "ASSIGNED" && task.helper && (
-        <section className="space-y-6">
-          <h2 className="text-3xl uppercase italic tracking-tighter">Active Operative</h2>
-          <div className="card-neo bg-tertiary-container flex flex-col md:flex-row justify-between items-center gap-6">
+        <section className="space-y-4">
+          <h2 className="text-xl uppercase italic tracking-tighter">Active Operative</h2>
+          <div className="card-neo bg-tertiary-container flex flex-col md:flex-row justify-between items-center gap-4 p-4">
             <div className="text-center md:text-left">
-               <h3 className="text-4xl uppercase mb-1">{task.helper.name}</h3>
-               <p className="font-headline font-black text-xs uppercase tracking-widest opacity-70">En-route to destination</p>
+               <h3 className="text-2xl uppercase mb-0.5">{task.helper.name}</h3>
+               <p className="font-headline font-black text-[8px] uppercase tracking-widest opacity-70">En-route to destination</p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
               <button 
-                className="btn-neo bg-surface-container-lowest flex-1 sm:flex-none" 
+                className="btn-neo bg-surface-container-lowest flex-1 sm:flex-none text-[10px] py-2 px-4" 
                 onClick={() => navigate(`/chat/${task._id}`, { state: { task } })}
               >
                 OPEN COMMS
               </button>
               <button 
-                className="btn-neo-primary flex-1 sm:flex-none" 
+                className="btn-neo-primary flex-1 sm:flex-none text-[10px] py-2 px-4" 
                 onClick={() => handleUpdateStatus("COMPLETED")}
               >
                 CLOSE OPERATION
@@ -165,11 +165,11 @@ export default function TaskDetail() {
 
       {/* COMPLETED SECTION */}
       {task.status === "COMPLETED" && (
-        <section className="animate-bounce-in">
-          <div className="card-neo bg-secondary-container text-center py-16 space-y-8">
-            <h2 className="text-6xl uppercase leading-none">Operation Successful!</h2>
+        <section>
+          <div className="card-neo bg-secondary-container text-center py-10 space-y-6">
+            <h2 className="text-4xl uppercase leading-none m-0">Operation Successful!</h2>
             <button 
-              className="btn-neo-primary text-2xl py-6 px-12 shadow-[10px_10px_0px_0px_rgba(48,52,44,1)] active:shadow-none" 
+              className="btn-neo-primary text-lg py-4 px-8 shadow-[6px_6px_0px_0px_rgba(48,52,44,1)] active:shadow-none" 
               onClick={() => navigate(`/payment/${task._id}`, { state: { task } })}
             >
               INITIALIZE WIRE TRANSFER →
@@ -181,19 +181,19 @@ export default function TaskDetail() {
       {/* PAID SECTION */}
       {task.status === "PAID" && (
         <section>
-          <div className="card-neo bg-secondary-container text-center py-16 space-y-8">
-            <h2 className="text-6xl uppercase leading-none">✓ Account Settled</h2>
-            <p className="font-headline font-black uppercase text-xl opacity-80">This engagement is officially archived.</p>
+          <div className="card-neo bg-secondary-container text-center py-10 space-y-6">
+            <h2 className="text-4xl uppercase leading-none m-0">✓ Account Settled</h2>
+            <p className="font-headline font-black uppercase text-sm opacity-80">This engagement is officially archived.</p>
             {task.rating && (
-              <div className="pt-12 border-t-[3px] border-on-surface border-dashed">
-                <label className="font-headline font-black text-xs uppercase tracking-[0.5em] mb-4 block">DEBRIEFING REPORT</label>
-                <div className="text-4xl mb-4 tracking-widest">
+              <div className="pt-8 border-t-[2px] border-on-surface border-dashed">
+                <label className="font-headline font-black text-[8px] uppercase tracking-[0.3em] mb-2 block">DEBRIEFING REPORT</label>
+                <div className="text-2xl mb-2 tracking-widest">
                   {"★".repeat(task.rating)}{"☆".repeat(5 - task.rating)}
                 </div>
-                <p className="text-2xl italic font-headline font-black uppercase">"{task.reviewText || "NO ADDITIONAL COMMENTS."}"</p>
+                <p className="text-lg italic font-headline font-black uppercase">"{task.reviewText || "NO ADDITIONAL COMMENTS."}"</p>
               </div>
             )}
-            <button className="btn-neo bg-surface-container-lowest" onClick={() => navigate("/")}>RETURN TO DASHBOARD</button>
+            <button className="btn-neo bg-surface-container-lowest text-[10px] py-2 px-4" onClick={() => navigate("/")}>RETURN TO DASHBOARD</button>
           </div>
         </section>
       )}
