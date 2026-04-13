@@ -1,7 +1,15 @@
 import express from 'express';
 import Task from '../models/Task.js';
+import protect from '../middleware/auth.js';
 
 const router = express.Router();
+
+// Helper function to release escrow
+const releaseEscrow = (task) => {
+  task.escrow_status = "released";
+  task.status = "COMPLETED";
+  console.log(`Escrow released: ₹${task.escrow_amount} to helper for task #${task._id}`);
+};
 
 // 1. GET ALL TASKS
 router.get('/', async (req, res) => {
@@ -71,6 +79,52 @@ router.patch('/:id/accept', async (req, res) => {
     
     console.log(`Escrow locked: ₹${updatedTask.escrow_amount} for task #${updatedTask._id}`);
     
+    res.status(200).json(updatedTask);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// 6. POSTER CONFIRMS WORK DONE
+router.patch('/:id/confirm-poster', protect, async (req, res) => {
+  try {
+    if (req.user.role !== 'user') {
+      return res.status(403).json({ message: 'Only posters can confirm this action' });
+    }
+
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+
+    task.payment_confirmed_poster = true;
+
+    if (task.payment_confirmed_helper) {
+      releaseEscrow(task);
+    }
+
+    const updatedTask = await task.save();
+    res.status(200).json(updatedTask);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// 7. HELPER CONFIRMS COMPLETION
+router.patch('/:id/confirm-helper', protect, async (req, res) => {
+  try {
+    if (req.user.role !== 'helper') {
+      return res.status(403).json({ message: 'Only helpers can confirm this action' });
+    }
+
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+
+    task.payment_confirmed_helper = true;
+
+    if (task.payment_confirmed_poster) {
+      releaseEscrow(task);
+    }
+
+    const updatedTask = await task.save();
     res.status(200).json(updatedTask);
   } catch (error) {
     res.status(500).json({ message: error.message });
