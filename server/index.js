@@ -7,6 +7,8 @@ import { createServer } from 'http';
 import taskRoutes from './routes/tasks.js';
 import authRoutes from './routes/auth.js';
 import Message from './models/Message.js';
+import Task from './models/Task.js';
+import protect from './middleware/auth.js';
 
 dotenv.config();
 
@@ -66,9 +68,24 @@ io.on('connection', (socket) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 
-app.get('/api/messages/:taskId', async (req, res) => {
+app.get('/api/messages/:taskId', protect, async (req, res) => {
   try {
-    const messages = await Message.find({ taskId: req.params.taskId }).sort({ createdAt: 1 });
+    const { taskId } = req.params;
+
+    // Validate ObjectId format to ensure 404 instead of 500 on cast errors
+    if (!mongoose.Types.ObjectId.isValid(taskId)) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    const task = await Task.findById(taskId);
+    if (!task) return res.status(404).json({ error: "Task not found" });
+
+    // Check if the user is the poster or the assigned helper
+    if (req.user._id.toString() !== task.posterId && req.user._id.toString() !== task.helperId) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    const messages = await Message.find({ taskId }).sort({ createdAt: 1 });
     res.json(messages);
   } catch (error) {
     res.status(500).json({ message: error.message });
