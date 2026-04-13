@@ -14,14 +14,19 @@ dotenv.config();
 
 const app = express();
 const httpServer = createServer(app);
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || ["http://localhost:5173", "http://localhost:5174"];
+
 const io = new Server(httpServer, {
   cors: {
-    origin: "*", 
+    origin: allowedOrigins, 
     methods: ["GET", "POST"]
   }
 });
 
-app.use(cors()); 
+app.use(cors({
+  origin: allowedOrigins
+})); 
 app.use(express.json()); 
 
 // Socket.io Logic with Debugging

@@ -69,7 +69,7 @@ export default function PostTask() {
       .from('task-images')
       .getPublicUrl(filePath);
 
-    return publicUrl;
+    return { publicUrl, filePath };
   };
 
   const handleSubmit = async (e) => {
@@ -82,10 +82,14 @@ export default function PostTask() {
     setError("");
     setIsSubmitting(true);
 
+    let uploadedFilePath = null;
+
     try {
       let imageUrl = null;
       if (imageFile) {
-        imageUrl = await uploadImage(imageFile);
+        const { publicUrl, filePath } = await uploadImage(imageFile);
+        imageUrl = publicUrl;
+        uploadedFilePath = filePath;
       }
 
       const response = await api.post("/tasks", {
@@ -99,6 +103,17 @@ export default function PostTask() {
       navigate("/");
     } catch (err) {
       console.error("Error saving task:", err);
+      
+      // Cleanup orphaned file if backend save failed
+      if (uploadedFilePath) {
+        try {
+          await supabase.storage.from('task-images').remove([uploadedFilePath]);
+          console.log("Cleaned up orphaned file:", uploadedFilePath);
+        } catch (cleanupErr) {
+          console.error("Failed to cleanup orphaned file:", cleanupErr);
+        }
+      }
+
       const msg = err.response?.data?.error 
         || err.response?.data?.message 
         || err.message 
