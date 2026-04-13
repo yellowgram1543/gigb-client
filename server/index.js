@@ -28,23 +28,56 @@ app.use(express.json());
 io.on('connection', (socket) => {
   console.log('DEBUG: Socket Connected:', socket.id);
 
-  socket.on('join_room', (taskId) => {
-    socket.join(taskId);
-    console.log(`DEBUG: Socket ${socket.id} joined room: ${taskId}`);
+  socket.on('join_room', async ({ taskId, userId }) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(taskId)) {
+        return socket.emit("error", { message: "Task not found" });
+      }
+
+      const task = await Task.findById(taskId);
+      if (!task) {
+        return socket.emit("error", { message: "Task not found" });
+      }
+
+      // Check if the user is the poster or the assigned helper
+      if (userId !== task.posterId && userId !== task.helperId) {
+        return socket.emit("error", { message: "Not authorized" });
+      }
+
+      socket.join(taskId);
+      console.log(`DEBUG: Socket ${socket.id} joined room: ${taskId}`);
+    } catch (error) {
+      console.error('DEBUG ERROR: Join room failed:', error.message);
+      socket.emit("error", { message: "Server error" });
+    }
   });
 
   socket.on('send_message', async (data) => {
     console.log('DEBUG: Message Received:', data);
-    const { taskId, sender, text, senderName } = data;
+    const { taskId, senderId, content, senderName } = data;
     
     try {
+      if (!mongoose.Types.ObjectId.isValid(taskId)) {
+        return socket.emit("error", { message: "Task not found" });
+      }
+
+      const task = await Task.findById(taskId);
+      if (!task) {
+        return socket.emit("error", { message: "Task not found" });
+      }
+
+      // Check if the sender is the poster or the assigned helper
+      if (senderId !== task.posterId && senderId !== task.helperId) {
+        return socket.emit("error", { message: "Not authorized" });
+      }
+
       const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       
       // Save to DB
       const newMessage = new Message({ 
         taskId, 
-        sender: sender === "anonymous" ? new mongoose.Types.ObjectId() : sender, // Fallback for testing
-        text, 
+        sender: senderId, 
+        text: content, 
         senderName, 
         time 
       });
@@ -57,6 +90,7 @@ io.on('connection', (socket) => {
       console.log(`DEBUG: Message Emitted to Room ${taskId}`);
     } catch (error) {
       console.error('DEBUG ERROR: Failed to save/send message:', error.message);
+      socket.emit("error", { message: "Server error" });
     }
   });
 
