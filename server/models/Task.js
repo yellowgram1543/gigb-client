@@ -12,10 +12,24 @@ const taskSchema = new mongoose.Schema({
   },
   address: { type: String, required: true },
   location: {
-    lat: { type: Number, required: true },
-    lng: { type: Number, required: true }
+    lat: { 
+      type: Number, 
+      required: true,
+      min: [-90, "Latitude must be between -90 and 90"],
+      max: [90, "Latitude must be between -90 and 90"]
+    },
+    lng: { 
+      type: Number, 
+      required: true,
+      min: [-180, "Longitude must be between -180 and 180"],
+      max: [180, "Longitude must be between -180 and 180"]
+    }
   },
-  budget: { type: Number, required: true },
+  budget: { 
+    type: Number, 
+    required: true,
+    min: [1, "Budget must be at least ₹1"]
+  },
   imageUrl: { type: String, default: null },
   posterId: { type: String, required: true },
   helperId: { type: String, default: null },

@@ -99,7 +99,11 @@ export default function PostTask() {
       navigate("/");
     } catch (err) {
       console.error("Error saving task:", err);
-      setError("Launch failed. System error.");
+      const msg = err.response?.data?.error 
+        || err.response?.data?.message 
+        || err.message 
+        || "Unknown error";
+      setError("Launch failed. " + msg);
     } finally {
       setIsSubmitting(false);
     }
