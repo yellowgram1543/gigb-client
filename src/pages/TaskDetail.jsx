@@ -43,6 +43,17 @@ export default function TaskDetail() {
     }
   };
 
+  const handleConfirmPoster = async () => {
+    try {
+      const response = await api.patch(`/tasks/${id}/confirm-poster`);
+      setTask(response.data);
+      updateTask(response.data);
+    } catch (err) {
+      console.error("Confirmation failed:", err);
+      alert("Failed to close operation. System error.");
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center py-20">
@@ -154,7 +165,7 @@ export default function TaskDetail() {
               </button>
               <button 
                 className="btn-neo-primary flex-1 sm:flex-none text-[10px] py-2 px-4" 
-                onClick={() => handleUpdateStatus("COMPLETED")}
+                onClick={handleConfirmPoster}
               >
                 CLOSE OPERATION
               </button>
