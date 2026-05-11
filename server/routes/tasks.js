@@ -70,6 +70,11 @@ router.patch('/:id', protect, async (req, res) => {
     // Whitelist of fields allowed to be updated via this route
     const allowedFields = ["title", "description", "budget", "category", "location", "scheduledAt", "address", "imageUrl"];
     
+    // SECURITY GUARD: If task is already ASSIGNED or beyond, budget/title cannot be changed
+    if (task.status !== 'OPEN' && (req.body.budget || req.body.title)) {
+      return res.status(403).json({ error: "Cannot modify budget or title after mission is assigned" });
+    }
+    
     // Filter req.body to only include allowed fields
     const filteredBody = {};
     Object.keys(req.body).forEach(key => {
@@ -92,12 +97,14 @@ router.patch('/:id', protect, async (req, res) => {
 });
 
 // 5. ACCEPT A GIG (Assign helper and lock escrow)
-router.patch('/:id/accept', async (req, res) => {
+router.patch('/:id/accept', protect, async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ message: 'Task not found' });
 
     task.status = 'ASSIGNED';
+    task.helperId = req.user._id.toString(); // Save the helper's ID
+
     if (req.body.helper) {
       task.helper = req.body.helper;
     }
@@ -216,15 +223,10 @@ router.patch('/:id/refund', protect, async (req, res) => {
   }
 });
 
-// 9. GET HELPER EARNINGS
-router.get('/earnings/:helperId', protect, async (req, res) => {
+// 9. GET HELPER EARNINGS (Auto-detects helper from token)
+router.get('/earnings/me', protect, async (req, res) => {
   try {
-    const { helperId } = req.params;
-
-    // Verify authorization: req.user._id must match helperId
-    if (req.user._id.toString() !== helperId) {
-      return res.status(403).json({ error: "Not authorized" });
-    }
+    const helperId = req.user._id.toString();
 
     // Query for all tasks associated with this helper
     const helperTasks = await Task.find({ helperId: helperId });
