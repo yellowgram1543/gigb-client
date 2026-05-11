@@ -22,7 +22,13 @@ export default function TaskDetail() {
         setLoading(false);
       }
     };
+
     fetchTask();
+    
+    // Auto-Sync: Check for updates every 5 seconds (Mission Intelligence Sync)
+    const syncInterval = setInterval(fetchTask, 5000);
+    
+    return () => clearInterval(syncInterval); // Cleanup on leave
   }, [id, updateTask]);
 
   // Removed hardcoded applicants list to support real-world helper assignment
