@@ -164,6 +164,31 @@ router.patch('/:id/confirm-helper', protect, async (req, res) => {
   }
 });
 
+// 7. POSTER SUBMITS REVIEW AND ARCHIVES (Final status: PAID)
+router.patch('/:id/review', protect, async (req, res) => {
+  try {
+    const { rating, reviewText } = req.body;
+    const task = await Task.findById(req.params.id);
+    
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+    
+    // Verify ownership
+    if (task.posterId !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    task.rating = rating;
+    task.reviewText = reviewText;
+    task.status = 'PAID';
+
+    const updatedTask = await task.save();
+    auditLog(`Review submitted for task #${req.params.id}. Finalized.`);
+    res.status(200).json(updatedTask);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // 8. POSTER REFUNDS ESCROW
 router.patch('/:id/refund', protect, async (req, res) => {
   try {
