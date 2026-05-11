@@ -1,5 +1,25 @@
 import jwt from 'jsonwebtoken';
+import jwksClient from 'jwks-rsa';
 import User from '../models/User.js';
+
+// Configure JWKS client to fetch keys from Supabase
+const client = jwksClient({
+  jwksUri: `${process.env.SUPABASE_URL}/auth/v1/.well-known/jwks.json`,
+  cache: true,
+  rateLimit: true,
+});
+
+// Helper to get the signing key based on the 'kid' in the token header
+const getKey = (header, callback) => {
+  client.getSigningKey(header.kid, (err, key) => {
+    if (err) {
+      callback(err);
+    } else {
+      const signingKey = key.getPublicKey();
+      callback(null, signingKey);
+    }
+  });
+};
 
 const protect = async (req, res, next) => {
   let token;
@@ -8,19 +28,19 @@ const protect = async (req, res, next) => {
     try {
       token = req.headers.authorization.split(' ')[1];
       
-      // Verify Supabase JWT
-      const decoded = jwt.verify(token, process.env.SUPABASE_JWT_SECRET);
+      // 1. Verify token using dynamic JWKS keys from Supabase
+      // This handles ECC, RSA, and rotations automatically
+      const decoded = await new Promise((resolve, reject) => {
+        jwt.verify(token, getKey, { algorithms: ['RS256', 'ES256', 'HS256'] }, (err, decoded) => {
+          if (err) reject(err);
+          else resolve(decoded);
+        });
+      });
       
-      /* 
-         Supabase JWT contains 'sub' (User ID). 
-         We'll check if this user exists in our MongoDB.
-         If not, we can optionally create them or just pass the ID.
-      */
+      // 2. Check/Create user in MongoDB
       let user = await User.findOne({ supabaseId: decoded.sub });
 
       if (!user) {
-        // Fallback: If user isn't in MongoDB yet, we create a record for them
-        // using data from the Supabase JWT
         user = await User.create({
           supabaseId: decoded.sub,
           email: decoded.email,
@@ -33,7 +53,10 @@ const protect = async (req, res, next) => {
       return next();
     } catch (error) {
       console.error('DEBUG: Auth Error:', error.message);
-      return res.status(401).json({ message: 'Not authorized, token failed' });
+      return res.status(401).json({ 
+        message: 'Not authorized, token failed',
+        error: error.message 
+      });
     }
   }
 
