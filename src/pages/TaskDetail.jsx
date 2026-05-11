@@ -25,10 +25,7 @@ export default function TaskDetail() {
     fetchTask();
   }, [id, updateTask]);
 
-  const [applicants] = useState([
-    { id: 101, name: "John Doe", rating: "4.8", reviews: 25 },
-    { id: 102, name: "Sarah Smith", rating: "4.9", reviews: 42 }
-  ]);
+  // Removed hardcoded applicants list to support real-world helper assignment
 
   const handleUpdateStatus = async (newStatus, helper = null) => {
     try {
@@ -119,30 +116,15 @@ export default function TaskDetail() {
         </div>
       </div>
 
-      {/* APPLICANTS SECTION */}
+      {/* WAITING FOR REAL HELPERS */}
       {task.status === "OPEN" && (
         <section className="space-y-4">
-          <h2 className="text-xl uppercase italic tracking-tighter">Field Operatives</h2>
-          <div className="grid grid-cols-1 gap-4">
-            {applicants.map(app => (
-              <div key={app.id} className="card-neo flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-surface-container-lowest hover:bg-surface-container transition-colors p-3">
-                <div className="flex items-center gap-4">
-                   <div className="w-10 h-10 neo-border bg-primary-container flex items-center justify-center font-black text-lg">
-                      {app.name[0]}
-                   </div>
-                   <div>
-                     <h3 className="text-lg uppercase m-0 leading-none mb-0.5">{app.name}</h3>
-                     <p className="font-headline font-black text-[8px] uppercase tracking-widest opacity-60">Rating: {app.rating} / {app.reviews} Reviews</p>
-                   </div>
-                </div>
-                <button 
-                  className="btn-neo-secondary w-full md:w-auto bg-secondary-container py-1.5 px-4 text-[10px]" 
-                  onClick={() => handleUpdateStatus("ASSIGNED", app)}
-                >
-                  ASSIGN MISSION →
-                </button>
-              </div>
-            ))}
+          <div className="card-neo bg-surface-container-low border-dashed py-12 text-center flex flex-col items-center gap-4">
+            <div className="w-16 h-16 border-[4px] border-on-surface border-b-transparent rounded-full animate-spin opacity-20"></div>
+            <div>
+              <h2 className="text-xl uppercase italic tracking-tighter opacity-50">Broadcasting Mission...</h2>
+              <p className="font-headline font-black text-[9px] uppercase tracking-widest opacity-40">Waiting for a field operative to accept</p>
+            </div>
           </div>
         </section>
       )}
